@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>E-POKETR'BY – Échange crypto ↔ MGA</title>
+<meta name="theme-color" content="#0F1012">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root[data-theme="dark"]{
+  --ink:#F2F4F8; --muted:#9096A3; --brand:#0A84FF; --brand-d:#0066CC; --on-brand:#FFFFFF;
+  --bg:#0F1012; --card:#1A1B1F; --line:#2B2D34;
+  --nav:#1C1D23; --nav-ink:#8E94A3; --nav-on:#3D9BFF;
+  --mga:#F0C451; --mga-bg:#3A3015; --cry:#7DB8FF; --cry-bg:#14304F;
+  --up:#46C58A; --down:#F0847A; --warn-bg:#3A3015;
+}
+:root[data-theme="light"]{
+  --ink:#0F1B33; --muted:#566684; --brand:#0A6FE8; --brand-d:#0657BA; --on-brand:#FFFFFF;
+  --bg:#EEF2F9; --card:#FFFFFF; --line:#D3DCEC;
+  --nav:#1B1F29; --nav-ink:#C4CBD8; --nav-on:#5AA2FF;
+  --mga:#8A5E00; --mga-bg:#FCF0CF; --cry:#0657BA; --cry-bg:#DCE7FB;
+  --up:#14804A; --down:#C0362C; --warn-bg:#FFF4D6;
+}
+*{box-sizing:border-box;margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+.num{font-variant-numeric:tabular-nums}
+#app{max-width:520px;margin:0 auto;min-height:100vh;padding-bottom:88px}
+.ribbon{background:#F5B93A;color:#1B1B1B;font-size:12px;font-weight:600;text-align:center;padding:5px 10px}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 4px}
+.hr{display:flex;align-items:center;gap:6px}
+.ib{background:transparent;color:var(--ink);padding:0;width:44px;height:44px;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.flag{display:inline-block;width:26px;height:18px;border-radius:3px;background:linear-gradient(90deg,#0055A4 33.3%,#fff 33.3% 66.6%,#EF4135 66.6%)}
+main{padding:6px 16px}
+h2{font-size:20px;margin:20px 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.big{font-size:32px;font-weight:800}
+.muted{color:var(--muted);font-size:14px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.row+.row{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.clk{cursor:pointer}
+.who{display:flex;align-items:center;gap:12px;min-width:0}
+button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:12px 16px;cursor:pointer;min-height:46px}
+.p{background:var(--brand);color:var(--on-brand)}.p:active{background:var(--brand-d)}
+.s{background:transparent;color:var(--brand);border:1.5px solid var(--brand)}
+.d{background:transparent;color:var(--down);border:1.5px solid var(--down)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.sm{padding:8px 12px;min-height:38px;font-size:14px}
+.pill{border-radius:99px;padding:14px 22px}
+.btnic{display:flex;align-items:center;justify-content:center;gap:8px;text-transform:uppercase;font-size:15px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.full{width:100%}
+label{display:block;font-size:14px;font-weight:600;margin:12px 0 4px}
+input,select,textarea{font:inherit;width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);min-height:46px}
+input:focus,select:focus,textarea:focus,button:focus-visible,summary:focus-visible{outline:3px solid var(--brand);outline-offset:1px}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:12px}
+.seg button{flex:1;background:transparent;color:var(--muted);min-height:40px;padding:8px}
+.seg button.on{background:var(--brand);color:var(--on-brand)}
+nav{position:fixed;bottom:0;left:0;right:0;background:var(--nav);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom);border-top:1px solid var(--line)}
+nav div{display:flex;width:100%;max-width:520px}
+nav button{flex:1;background:transparent;color:var(--nav-ink);border-radius:0;font-size:12px;font-weight:600;padding:8px 2px;min-height:62px;display:flex;flex-direction:column;align-items:center;gap:4px}
+nav button.on{color:var(--nav-on)}
+#sheetWrap{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;z-index:20}
+#sheetWrap.open{display:flex}
+#sheet{background:var(--card);width:100%;max-width:520px;max-height:90vh;overflow:auto;border-radius:20px 20px 0 0;padding:18px 16px 28px}
+#sheet h3{font-size:19px;margin-bottom:4px}
+#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:12px;font-size:14px;max-width:90%;z-index:40;display:none;text-align:center}
+#busy{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50;color:#fff;font-weight:700}
+#busy.on{display:flex}
+.pos{color:var(--up)}.neg{color:var(--down)}
+.addr{word-break:break-all;background:var(--bg);padding:10px;border-radius:10px;font-family:ui-monospace,Menlo,monospace;font-size:13px;margin-top:6px}
+.note{font-size:13px;color:var(--muted);margin-top:8px}
+.warn{background:var(--warn-bg);color:var(--ink);border-radius:10px;padding:10px;font-size:13px;margin:10px 0}
+.auth{padding:10px 16px 28px}
+.brandbig{font-size:34px;font-weight:800;letter-spacing:.5px;margin:30px 0 4px}
+.q-line{display:flex;justify-content:space-between;align-items:center}
+.logo{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;flex:0 0 auto}
+.slide{border-radius:20px;padding:22px 16px;min-height:150px;color:#fff;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;border:1px solid rgba(255,255,255,.12);margin-bottom:10px}
+.slide b{font-size:22px}.slide span.t{font-size:15px;line-height:1.35;max-width:300px}
+.s1{background:linear-gradient(135deg,#090912,#3B0F7C 60%,#7B2CF0)}
+.s2{background:linear-gradient(135deg,#051018,#0B4A7A 60%,#1E90FF)}
+.s3{background:linear-gradient(135deg,#0A0A14,#1F2A7A 60%,#5B5BF0)}
+.search{position:relative}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search input{padding-left:46px;border-radius:14px}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-top:10px}
+summary{padding:16px;font-weight:600;cursor:pointer;list-style:none;display:flex;gap:10px;align-items:flex-start}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸";color:var(--muted);font-size:12px;margin-top:4px}
+details[open] summary::before{content:"▾"}
+details p{padding:0 16px 16px;color:var(--muted);font-size:15px}
+.swgrid{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:center}
+.swout{font-size:26px;font-weight:800;min-height:46px;display:flex;align-items:center;word-break:break-all}
+.flip{display:flex;justify-content:center;margin:-4px 0 8px}
+.flip button{width:46px;height:46px;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center}
+.menu{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);margin-bottom:10px;justify-content:flex-start}
+.mini{width:72px;height:30px;flex:0 0 72px}
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.cgrid button{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--bg);color:var(--ink);border:1px solid var(--line);font-size:13px;padding:10px 4px}
+.lg{position:relative;display:inline-block;flex:0 0 auto;line-height:0}
+.lg>svg{display:block;border-radius:50%}
+.nb{position:absolute;right:-4px;bottom:-4px;border-radius:50%;border:2px solid var(--card);background:var(--card);overflow:hidden;line-height:0;box-sizing:content-box}
+.scale{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:12px 0 10px;background:var(--line)}
+.scale i{display:block;height:100%}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:4px}
+.stat b{font-size:18px}
+.lnk{display:flex;align-items:center;justify-content:center;text-decoration:none;border-radius:12px;padding:12px 16px;min-height:46px;font-weight:700}
+.apanel{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.apanel .grid2{margin-bottom:10px}
+.admseg{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px}
+.admseg button{flex:0 0 auto;background:var(--card);color:var(--muted);border:1px solid var(--line);min-height:38px;padding:8px 12px;font-size:14px}
+.admseg button.on{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+.ann{border-radius:14px;padding:12px 14px;margin:12px 0 0;border:1px solid;line-height:1.4}
+.ann b{display:block;margin-bottom:2px}
+.ann.info{background:rgba(10,132,255,.16);border-color:#0A84FF}
+.ann.success{background:rgba(70,197,138,.16);border-color:#46C58A}
+.ann.warning{background:rgba(245,185,58,.20);border-color:#F5B93A}
+.ann.danger{background:rgba(240,132,122,.20);border-color:#F0847A}
+textarea{min-height:90px;resize:vertical}
+.ib{position:relative}
+.notif{position:absolute;top:2px;right:2px;min-width:18px;height:18px;border-radius:9px;background:#E5484D;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.st{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;vertical-align:middle}
+.st-pending{background:rgba(245,185,58,.25);color:var(--ink)}
+.st-sent,.st-confirmed,.st-credited{background:rgba(70,197,138,.25);color:var(--ink)}
+.st-rejected{background:rgba(240,132,122,.28);color:var(--ink)}
+.badge{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--mga-bg);color:var(--mga)}
+@media (prefers-reduced-motion:no-preference){#sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="sheetWrap"><div id="sheet" role="dialog" aria-modal="true"></div></div>
+<div id="toast" role="status"></div>
+<div id="busy">Veuillez patienter…</div>
+<div id="upd" style="display:none;position:fixed;left:0;right:0;top:0;z-index:60;background:#0A84FF;color:#fff;padding:10px 14px;text-align:center;font-weight:700">Nouvelle version disponible <button onclick="location.reload()" style="margin-left:10px;min-height:34px;padding:6px 14px;border-radius:99px;background:#fff;color:#0A57B8">Mettre à jour</button></div>
+
+<script>
+/* =====================================================================
+   E-POKETR'BY – V12 (connectée à Supabase)
+   - Comptes, soldes, grand livre, conversions, dépôts et retraits : stockés et
+     contrôlés CÔTÉ SERVEUR (Supabase). Cette page n'est que l'interface.
+   - La clé ci-dessous est une clé « publishable » : elle peut être publique,
+     la sécurité repose sur les règles (RLS) du serveur.
+   ===================================================================== */
+const SB_URL = 'https://mvryesxrtchqyralzsxl.supabase.co';
+const SB_KEY = 'sb_publishable_oitxkQnBfvmC-cSjZcFvfw_zUghTFek';
+const SUPPORT = {whatsapp:'0338447499', phone:'0387892052'};
+const OPS = ['MVola','Orange Money','Airtel Money'];
+const MIN_MGA = 1000, MIN_MGA_WD = 5000, LIMIT_NO_KYC = 500000;
+const PRICE_MAX_AGE_MIN = 10;
+
+const ASSETS = {
+  USDT:{name:'Tether',     cg:'tether',      dec:2,col:'#26A17B',nets:[['TRC20',1],['BEP20',0.3],['ERC20',4]]},
+  USDC:{name:'USD Coin',   cg:'usd-coin',    dec:2,col:'#2775CA',nets:[['BEP20',0.3],['ERC20',4]]},
+  BTC: {name:'Bitcoin',    cg:'bitcoin',     dec:6,col:'#F7931A',nets:[['BTC',0.0001]]},
+  ETH: {name:'Ethereum',   cg:'ethereum',    dec:5,col:'#627EEA',nets:[['ERC20',0.002]]},
+  BNB: {name:'BNB',        cg:'binancecoin', dec:4,col:'#F3BA2F',nets:[['BEP20',0.0005]]},
+  TRX: {name:'TRON',       cg:'tron',        dec:2,col:'#EB0029',nets:[['TRC20',1]]},
+  LTC: {name:'Litecoin',   cg:'litecoin',    dec:4,col:'#345D9D',nets:[['LTC',0.001]]},
+  SOL: {name:'Solana',     cg:'solana',      dec:3,col:'#9945FF',nets:[['SOL',0.001]]},
+  DOGE:{name:'Dogecoin',   cg:'dogecoin',    dec:2,col:'#C2A633',nets:[['DOGE',2]]},
+  XRP: {name:'XRP',        cg:'ripple',      dec:6,col:'#3B4650',nets:[['XRP',0.2]]},
+  TON: {name:'Toncoin',    cg:'the-open-network',dec:4,col:'#0098EA',nets:[['TON',0.05]]},
+  XLM: {name:'Stellar',    cg:'stellar',     dec:4,col:'#14B6E7',nets:[['XLM',0.01]]}
+};
+const CR = Object.keys(ASSETS);
+const DEC = Object.assign({MGA:0}, Object.fromEntries(CR.map(k=>[k,ASSETS[k].dec])));
+const B58='123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+const NETS = {
+  TRC20:{label:'TRON (TRC20)',re:/^T[1-9A-HJ-NP-Za-km-z]{33}$/,ph:'T…'},
+  BEP20:{label:'BNB Smart Chain (BEP20)',re:/^0x[a-fA-F0-9]{40}$/,ph:'0x…'},
+  ERC20:{label:'Ethereum (ERC20)',re:/^0x[a-fA-F0-9]{40}$/,ph:'0x…'},
+  BTC:{label:'Bitcoin',re:/^(bc1[a-z0-9]{20,70}|[13][1-9A-HJ-NP-Za-km-z]{25,34})$/,ph:'bc1…'},
+  LTC:{label:'Litecoin',re:/^(ltc1[a-z0-9]{20,70}|[LM3][1-9A-HJ-NP-Za-km-z]{25,34})$/,ph:'ltc1…'},
+  SOL:{label:'Solana',re:/^[1-9A-HJ-NP-Za-km-z]{32,44}$/,ph:'Adresse Solana'},
+  DOGE:{label:'Dogecoin',re:/^D[1-9A-HJ-NP-Za-km-z]{25,34}$/,ph:'D…'},
+  XRP:{label:'XRP Ledger',re:/^r[1-9A-HJ-NP-Za-km-z]{24,34}$/,ph:'r…',memo:'Destination Tag',memoRe:/^\d{1,10}$/,memoPh:'Nombre (ex. 123456789)'},
+  TON:{label:'TON',re:/^(EQ|UQ)[A-Za-z0-9_-]{46}$/,ph:'UQ…',memo:'Memo (commentaire)',memoRe:/^[A-Za-z0-9]{1,30}$/,memoPh:'Lettres et chiffres'},
+  XLM:{label:'Stellar (XLM)',re:/^G[A-Z2-7]{55}$/,ph:'G…',memo:'Memo',memoRe:/^[\x20-\x7E]{1,28}$/,memoPh:'Texte ou nombre (28 max)'}
+};
+const netFee=(a,net)=>{const n=ASSETS[a].nets.find(x=>x[0]===net);return n?n[1]:0};
+const net0=a=>ASSETS[a].nets.length?ASSETS[a].nets[0][0]:'';
+const NETINFO={}; const MEMONAME={XRP:'Destination Tag',TON:'Memo (commentaire)',XLM:'Memo'};
+/* Les réseaux, frais et minimums viennent du serveur (modifiables par l'admin). Les valeurs ci-dessus ne servent que de secours. */
+function applyNetworks(rows){
+  if(!Array.isArray(rows)||!rows.length) return;
+  const by={};
+  rows.forEach(r=>{if(!ASSETS[r.asset])return;(by[r.asset]=by[r.asset]||[]).push(r);
+    let re;try{re=new RegExp(r.address_regex)}catch(e){re=/.+/}
+    const old=NETS[r.network]||{},n=Object.assign({},old,{label:r.label,re,ph:old.ph||'Adresse'});
+    if(r.needs_memo){let mre;try{mre=new RegExp(r.memo_regex||'^.{1,28}$')}catch(e){mre=/.+/}
+      n.memo=old.memo||MEMONAME[r.network]||'Memo';n.memoRe=mre;n.memoPh=old.memoPh||'Memo'}
+    else{delete n.memo;delete n.memoRe;delete n.memoPh}
+    NETS[r.network]=n;NETINFO[r.asset+'|'+r.network]={fee:Number(r.fee),min:Number(r.min_withdraw),enabled:r.enabled,label:r.label}});
+  CR.forEach(a=>{ASSETS[a].nets=(by[a]||[]).filter(r=>r.enabled).map(r=>[r.network,Number(r.fee)])});
+  S.netRows=rows}
+
+/* ---------- stockage local (session + préférences) ---------- */
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+let SESS=null; try{SESS=JSON.parse(LS.get('epoketrby_sess')||'null')}catch(e){}
+function saveSess(s){SESS=s;if(s)LS.set('epoketrby_sess',JSON.stringify(s));else LS.del('epoketrby_sess')}
+
+/* ---------- état ---------- */
+let S = {me:null,bal:{},ledger:[],assets:{},fee:0.01,pdep:[],pwd:[],swaps:[],cg:{},usdMga:4500,loaded:false,pay:{},claims:[],ann:[],rates:{},ratesOk:false,set:{},gm:{buy:0.01,sell:0.01}};
+let ui = {tab:'home',auth:'login',qq:'',openAsset:null,lock:false,swap:{from:'MGA',to:'USDT',amt:''},adm:{sec:'dep',rows:[],users:{},err:'',wallets:[],pool:[],addr:{}}};
+let THEME = LS.get('epoketrby_theme')||'dark';
+
+/* ---------- utilitaires ---------- */
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rnd = (n,d)=>{const f=Math.pow(10,d);return Math.round((n+Number.EPSILON)*f)/f};
+const num = v=>{const n=parseFloat(String(v).replace(/\s/g,'').replace(',','.'));return isNaN(n)?0:n};
+const val = id=>{const e=document.getElementById(id);return e?e.value.trim():''};
+function fmt(a,n){n=rnd(Number(n)||0,DEC[a]);
+  const t=n.toLocaleString('fr-FR',{minimumFractionDigits:(a==='USDT'||a==='USDC')?2:0,maximumFractionDigits:DEC[a]});
+  return t+' '+a}
+const fmtTel=n=>String(n).replace(/^(\d{3})(\d{2})(\d{3})(\d{2})$/,'$1 $2 $3 $4');
+const fdate=d=>{try{return new Date(d).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(e){return ''}};
+function pct(c){return (c>=0?'+':'')+c.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+' %'}
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',3200)}
+const bal = a=>Number((S.bal||{})[a])||0;
+/* Prix de référence (marché) et cours appliqués aux clients (calculés par le serveur) */
+const refPx = a=>{const x=S.assets[a];return x&&x.price>0?x.price:0};
+const priceAge = a=>{const x=S.assets[a];return x&&x.updated?(Date.now()-new Date(x.updated).getTime())/60000:Infinity};
+const buyPx = a=>{const r=S.rates[a];if(r&&r.buy>0)return r.buy;if(S.ratesOk)return 0;return(refPx(a)&&priceAge(a)<=PRICE_MAX_AGE_MIN)?refPx(a)*(1+S.fee):0};
+const sellPx = a=>{const r=S.rates[a];if(r&&r.sell>0)return r.sell;if(S.ratesOk)return 0;return(refPx(a)&&priceAge(a)<=PRICE_MAX_AGE_MIN)?refPx(a)*(1-S.fee):0};
+const px = a=>sellPx(a)||refPx(a);
+const priceOk = a=>buyPx(a)>0&&sellPx(a)>0;
+const totalMGA = ()=>CR.reduce((s,a)=>s+bal(a)*px(a),bal('MGA'));
+const refTx = id=>'EP'+String(id).padStart(6,'0');
+const isAdmin = ()=>!!(S.me&&S.me.role==='admin');
+const kyc = ()=>(S.me&&S.me.kyc_level)||0;
+const emailOf = p=>p+'@epoketrby.app';
+function chgOf(a){const c=S.cg[a];return c&&typeof c.ch==='number'?c.ch:null}
+
+/* ---------- accès au serveur Supabase ---------- */
+class ApiError extends Error{constructor(m,code,status){super(m);this.code=code;this.status=status}}
+async function raw(url,opt){
+  let r;try{r=await fetch(url,opt)}catch(e){throw new ApiError('Connexion impossible. Vérifiez votre internet.','net',0)}
+  const txt=await r.text();let j=null;if(txt){try{j=JSON.parse(txt)}catch(e){j=txt}}
+  if(!r.ok){const msg=(j&&typeof j==='object'&&(j.message||j.msg||j.error_description||j.error))||('Erreur '+r.status);
+    throw new ApiError(msg,(j&&typeof j==='object'&&(j.code||j.error_code))||r.status,r.status)}
+  return j}
+function setSessFrom(j){saveSess({access:j.access_token,refresh:j.refresh_token,exp:Date.now()+(j.expires_in||3600)*1000,uid:(j.user&&j.user.id)||(SESS&&SESS.uid)})}
+async function refreshToken(){
+  if(!SESS||!SESS.refresh) throw new ApiError('Session expirée. Reconnectez-vous.','auth',401);
+  const j=await raw(SB_URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{apikey:SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:SESS.refresh})});
+  setSessFrom(j)}
+async function sb(path,o){o=o||{};
+  if(SESS&&SESS.exp-Date.now()<60000){try{await refreshToken()}catch(e){if(e.code==='net')throw e;await doLogout(true);throw e}}
+  const go=()=>{const h={apikey:SB_KEY,'Content-Type':'application/json'};if(SESS)h.Authorization='Bearer '+SESS.access;
+    return raw(SB_URL+path,{method:o.method||'GET',headers:h,body:o.body!==undefined?JSON.stringify(o.body):undefined})};
+  try{return await go()}catch(e){if(e.status===401&&SESS){try{await refreshToken()}catch(e2){await doLogout(true);throw e2}return await go()}throw e}}
+const rpc=(n,a)=>sb('/rest/v1/rpc/'+n,{method:'POST',body:a||{}});
+const sel=p=>sb('/rest/v1/'+p);
+
+function friendlyErr(e){
+  const m=String((e&&e.message)||e);
+  if(e&&e.code==='net') return m;
+  const map=[[/invalid login credentials|invalid_credentials/i,'Numéro ou PIN incorrect.'],
+   [/already registered|user_already_exists|already been registered/i,'Un compte existe déjà avec ce numéro.'],
+   [/rate limit|over_.*rate|too many/i,'Trop de tentatives. Réessayez dans quelques minutes.'],
+   [/database error saving new user/i,'Inscription impossible : vérifiez le nom et le numéro (03XXXXXXXX).'],
+   [/jwt expired|invalid jwt/i,'Session expirée. Reconnectez-vous.'],
+   [/password should be at least|weak_password/i,'Le PIN doit comporter 6 chiffres.']];
+  for(const [r,t] of map) if(r.test(m)||(e&&r.test(String(e.code)))) return t;
+  return m}
+
+/* ---------- authentification ---------- */
+async function signup(name,phone,pin,ref){
+  if(name.length<2) throw new ApiError('Saisissez votre nom.');
+  if(!/^03\d{8}$/.test(phone)) throw new ApiError('Numéro invalide : 10 chiffres commençant par 03 (ex. 0341234567).');
+  if(!/^\d{6}$/.test(pin)) throw new ApiError('Le code PIN doit comporter 6 chiffres.');
+  const j=await raw(SB_URL+'/auth/v1/signup',{method:'POST',headers:{apikey:SB_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify({email:emailOf(phone),password:pin,data:{name,phone,ref:ref||''}})});
+  if(!j||!j.access_token) throw new ApiError("Compte créé, mais la confirmation par e-mail est encore activée. Désactivez « Confirm email » dans Supabase.",'confirm',0);
+  setSessFrom(j)}
+async function login(phone,pin){
+  if(!/^03\d{8}$/.test(phone)) throw new ApiError('Numéro invalide : 10 chiffres commençant par 03.');
+  if(!/^\d{6}$/.test(pin)) throw new ApiError('Le code PIN doit comporter 6 chiffres.');
+  const j=await raw(SB_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:SB_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify({email:emailOf(phone),password:pin})});
+  setSessFrom(j)}
+async function doLogout(silent){
+  try{if(SESS&&!silent)await raw(SB_URL+'/auth/v1/logout',{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+SESS.access}})}catch(e){}
+  S.admCnt=null;document.title="E-POKETR'BY";saveSess(null);S={me:null,bal:{},ledger:[],assets:S.assets,fee:S.fee,pdep:[],pwd:[],swaps:[],cg:S.cg,usdMga:S.usdMga,loaded:false,pay:S.pay,claims:[],ann:[],rates:S.rates,ratesOk:S.ratesOk,set:{},gm:S.gm};
+  ui.tab='home';ui.openAsset=null;closeSheet();render()}
+
+/* ---------- chargement des données ---------- */
+async function refresh(){
+  if(!SESS) return;
+  const uid=SESS.uid,opt=p=>sel(p).catch(()=>null);   // les tables des parties 7 sont facultatives tant que le SQL n'est pas installé
+  const [me,bals,led,ass,set,dep,wd,sw,pn,cl,an,rt,nr]=await Promise.all([
+    sel('profiles?select=id,name,phone,kyc_level,role,referral_code,memo_id&id=eq.'+uid),
+    sel('balances?select=asset,amount&user_id=eq.'+uid),
+    sel('ledger?select=id,asset,amount,type,note,created_at&user_id=eq.'+uid+'&order=id.desc&limit=200'),
+    sel('assets?select=code,price_mga,price_updated_at,enabled,buy_margin,sell_margin,manual_buy_mga,manual_sell_mga,manual_updated_at').catch(()=>sel('assets?select=code,price_mga,price_updated_at,enabled')),
+    sel('settings?select=key,value'),
+    sel('mga_deposits?select=id,operator,sender_number,amount,reference,status,created_at,decided_at&user_id=eq.'+uid+'&order=created_at.desc&limit=100'),
+    sel('withdrawals?select=id,asset,network,address,memo,operator,mobile_number,holder_name,amount,fee,status,txid,reject_reason,dest_type,dest_name,created_at,decided_at&user_id=eq.'+uid+'&order=created_at.desc&limit=100').catch(()=>sel('withdrawals?select=id,asset,network,address,memo,operator,mobile_number,holder_name,amount,fee,status,txid,reject_reason,created_at,decided_at&user_id=eq.'+uid+'&order=created_at.desc&limit=100')),
+    sel('swaps?select=from_asset,to_asset,from_amount,to_amount,price_mga,fee_rate,created_at&user_id=eq.'+uid+'&order=created_at.desc&limit=200'),
+    opt('pay_numbers?select=operator,number,holder_name'),
+    opt('crypto_deposit_claims?select=id,asset,network,txid,from_address,amount,status,created_at,decided_at&user_id=eq.'+uid+'&order=created_at.desc&limit=100'),
+    opt('announcements?select=id,title,body,level,expires_at&active=eq.true&order=created_at.desc&limit=10'),
+    rpc('get_rates').catch(()=>null),
+    opt('asset_networks?select=asset,network,label,fee,min_withdraw,address_regex,needs_memo,memo_regex,enabled')]);
+  S.me=(me&&me[0])||null;
+  if(!S.me) throw new ApiError("Profil introuvable. Le profil n'a pas été créé (vérifiez que les 6 parties SQL ont bien été exécutées).");
+  applyNetworks(nr);
+  S.bal={};(bals||[]).forEach(b=>S.bal[b.asset]=Number(b.amount));
+  S.ledger=led||[];
+  const nz=v=>v==null?null:Number(v);
+  S.assets={};(ass||[]).forEach(a=>S.assets[a.code]={price:a.price_mga==null?0:Number(a.price_mga),updated:a.price_updated_at,enabled:a.enabled,bm:nz(a.buy_margin),sm:nz(a.sell_margin),mb:nz(a.manual_buy_mga),ms:nz(a.manual_sell_mga),mu:a.manual_updated_at||null});
+  S.set={};(set||[]).forEach(x=>S.set[x.key]=x.value);
+  S.fee=Number(S.set.swap_fee||0.01);
+  S.gm={buy:S.set.buy_margin!=null?Number(S.set.buy_margin):S.fee,sell:S.set.sell_margin!=null?Number(S.set.sell_margin):S.fee};
+  S.ratesOk=Array.isArray(rt);S.rates={};(rt||[]).forEach(r=>S.rates[r.code]={buy:r.buy==null?0:Number(r.buy),sell:r.sell==null?0:Number(r.sell),ref:r.reference==null?0:Number(r.reference),updated:r.updated});
+  S.pdep=dep||[];S.pwd=wd||[];S.swaps=sw||[];
+  S.pay={};(pn||[]).forEach(x=>S.pay[x.operator]={number:x.number,holder:x.holder_name});
+  S.claims=cl||[];
+  const now=Date.now();S.ann=(an||[]).filter(x=>!x.expires_at||new Date(x.expires_at).getTime()>now);
+  S.loaded=true}
+
+async function loadMarket(){ /* tendances d'affichage (CoinGecko) – ne sert PAS à fixer les prix */
+  try{
+    const ids=CR.map(a=>ASSETS[a].cg).join(',');
+    const r=await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids='+ids+'&sparkline=true&price_change_percentage=24h');
+    if(!r.ok) return;const arr=await r.json();if(!Array.isArray(arr)) return;
+    arr.forEach(c=>{const k=CR.find(x=>ASSETS[x].cg===c.id);if(!k)return;
+      const sp=(c.sparkline_in_7d&&c.sparkline_in_7d.price)||[],step=Math.max(1,Math.floor(sp.length/48));
+      S.cg[k]={ch:typeof c.price_change_percentage_24h==='number'?c.price_change_percentage_24h:null,spark:sp.filter((_,i)=>i%step===0).slice(-48),img:c.image||'',usd:c.current_price}});
+    if(S.me&&!busy()&&(ui.tab==='quotes')) render(true)
+  }catch(e){}}
+
+/* ---------- logos ---------- */
+const LOGOS = {
+ USDT:'<circle cx="16" cy="16" r="16" fill="#26A17B"/><path fill="#fff" d="M8 8h16v3.2h-6.2v2.4c3.6.2 6.2 1 6.2 2s-2.6 1.8-6.2 2V24h-3.6v-6.4c-3.6-.2-6.2-1-6.2-2s2.6-1.8 6.2-2v-2.4H8z"/>',
+ USDC:'<circle cx="16" cy="16" r="16" fill="#2775CA"/><path d="M10.5 7.8a9.6 9.6 0 0 0 0 16.4M21.5 7.8a9.6 9.6 0 0 1 0 16.4" stroke="#fff" stroke-width="1.7" fill="none" stroke-linecap="round"/><text x="16" y="21.4" text-anchor="middle" font-size="15" font-weight="700" fill="#fff" font-family="Arial,Helvetica,sans-serif">$</text>',
+ BTC:'<circle cx="16" cy="16" r="16" fill="#F7931A"/><g transform="rotate(14 16 16)" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M12 9.5v12.6M12 9.5h6.2a3.1 3.1 0 0 1 0 6.2H12M12 15.7h7a3.2 3.2 0 0 1 0 6.4H12M14.6 7v2.5M18.2 7v2.5M14.6 22.1v2.5M18.2 22.1v2.5"/></g>',
+ ETH:'<circle cx="16" cy="16" r="16" fill="#627EEA"/><path fill="#fff" fill-opacity=".6" d="M16 5 9.5 16.2 16 19.4z"/><path fill="#fff" d="M16 5l6.5 11.2L16 19.4z"/><path fill="#fff" fill-opacity=".6" d="M16 21.2 9.5 17.4 16 27z"/><path fill="#fff" d="M16 21.2l6.5-3.8L16 27z"/>',
+ BNB:'<circle cx="16" cy="16" r="16" fill="#F3BA2F"/><g fill="#fff"><path d="M16 6l3 3-3 3-3-3zM6 16l3-3 3 3-3 3zM26 16l-3-3-3 3 3 3zM16 26l3-3-3-3-3 3zM16 13.2l2.8 2.8-2.8 2.8-2.8-2.8z"/></g>',
+ TRX:'<circle cx="16" cy="16" r="16" fill="#EB0029"/><path d="M8.5 9.5l14.800 3-7 12.500zM8.5 9.5l7.800 15.500M23.300 12.500l-9.600 3.300" stroke="#fff" stroke-width="1.6" fill="none" stroke-linejoin="round"/>',
+ LTC:'<circle cx="16" cy="16" r="16" fill="#345D9D"/><text x="16" y="22" text-anchor="middle" font-size="18" font-weight="700" fill="#fff" font-family="Arial,Helvetica,sans-serif">Ł</text>',
+ SOL:'<circle cx="16" cy="16" r="16" fill="#1B1B2F"/><defs><linearGradient id="gsol" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#9945FF"/><stop offset="1" stop-color="#14F195"/></linearGradient></defs><path fill="url(#gsol)" d="M10.200 8.800h13.600l-2.200 2.600H8zM8 14.700h13.600l2.200 2.600H10.200zM10.200 20.600h13.600l-2.200 2.600H8z"/>',
+ DOGE:'<circle cx="16" cy="16" r="16" fill="#C2A633"/><text x="16" y="22.400" text-anchor="middle" font-size="18" font-weight="700" fill="#fff" font-family="Arial,Helvetica,sans-serif">Ð</text>',
+ XRP:'<circle cx="16" cy="16" r="16" fill="#23292F"/><path d="M9 9.500c3 4 4.500 5.200 7 5.200s4-1.200 7-5.200M9 22.500c3-4 4.500-5.200 7-5.200s4 1.200 7 5.200" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>',
+ TON:'<circle cx="16" cy="16" r="16" fill="#0098EA"/><path fill="#fff" d="M9.700 10h12.600c.9 0 1.400 1 .9 1.700L17 22.200c-.4.600-1.300.6-1.700 0L8.800 11.700C8.300 11 8.800 10 9.700 10z"/><path d="M16 10.500v11" stroke="#0098EA" stroke-width="1.5"/>',
+ XLM:'<circle cx="16" cy="16" r="16" fill="#14B6E7"/><path fill="#fff" d="M16 7l2.200 6.800L25 16l-6.800 2.200L16 25l-2.200-6.800L7 16l6.800-2.200z"/>'
+};
+const NETLOGO = {TRC20:'TRX',BEP20:'BNB',ERC20:'ETH'};
+function logo(a,sz=40,net){
+  if(a==='MGA') return `<span class="logo" style="width:${sz}px;height:${sz}px;background:#F0C451;color:#1B1B1B;font-size:${Math.round(sz*.38)}px">Ar</span>`;
+  const c=S.cg[a],img=(c&&c.img)?`<img src="${esc(c.img)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()" style="position:absolute;left:0;top:0;width:100%;height:100%;border-radius:50%;object-fit:cover">`:'';
+  const nl=(net&&NETLOGO[net]&&NETLOGO[net]!==a)?NETLOGO[net]:null,bs=Math.round(sz*.42);
+  const badge=nl?`<span class="nb" style="width:${bs}px;height:${bs}px"><svg viewBox="0 0 32 32" width="${bs}" height="${bs}" aria-hidden="true">${LOGOS[nl]}</svg></span>`:'';
+  return `<span class="lg" style="width:${sz}px;height:${sz}px"><svg viewBox="0 0 32 32" width="${sz}" height="${sz}" aria-hidden="true">${LOGOS[a]}</svg>${img}${badge}</span>`}
+const IC = {
+  user:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3.2"/><path d="M5.5 19c1.5-3 4-4 6.5-4s5 1 6.5 4"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon:'<path d="M21 13A9 9 0 1 1 11 3a7 7 0 0 0 10 10z"/>',
+  head:'<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/><path d="M19 20c0 1.5-2 2-5 2"/>',
+  home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
+  quote:'<path d="M3 17l5-6 4 4 8-9"/><path d="M15 6h5v5"/>',
+  swap:'<path d="M4 8h14l-3-3"/><path d="M20 16H6l3 3"/>',
+  wallet:'<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18"/><circle cx="16.5" cy="15" r="1.2"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', minus:'<path d="M5 12h14"/>',
+  invite:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><path d="M19 8v6M16 11h6"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  updown:'<path d="M8 4v16l-3-3M16 20V4l3 3"/>',
+  stats:'<path d="M5 20V11M12 20V4M19 20v-6"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+  news:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/>',
+  shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>'
+};
+const ic=(k,s=22)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
+function spark(h){if(!h||h.length<3)return '';const mn=Math.min(...h),mx=Math.max(...h),r=(mx-mn)||1;
+  const pts=h.map((v,i)=>(i/(h.length-1)*118+1).toFixed(1)+','+(34-(v-mn)/r*30).toFixed(1)).join(' ');
+  return `<svg viewBox="0 0 120 36" preserveAspectRatio="none" class="mini" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(${h[h.length-1]>=h[0]?'--up':'--down'})" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>`}
+
+/* ---------- thème ---------- */
+function applyTheme(){const t=THEME==='auto'?((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'):THEME;document.documentElement.dataset.theme=t}
+function setTheme(t){THEME=t;LS.set('epoketrby_theme',t);applyTheme();render(true)}
+
+/* ---------- conversions (estimation identique à celle du serveur) ---------- */
+function swapOut(from,to,amt){
+  if(from==='MGA') return rnd(amt/buyPx(to),DEC[to]);
+  return Math.floor(amt*sellPx(from))}
+function swapRate(from,to){const c=from==='MGA'?to:from;if(!priceOk(c))return '—';
+  return from==='MGA'?`1 ${to} = ${fmt('MGA',Math.round(buyPx(to)))}`:`1 ${from} = ${fmt('MGA',Math.round(sellPx(from)))}`}
+const swapCrypto=(f,t)=>f==='MGA'?t:f;
+
+/* ---------- FAQ ---------- */
+const FAQ=[
+ ["Comment faire un dépôt en Ariary (MGA) ?","Touchez « Dépôt », choisissez MGA, votre opérateur (MVola, Orange Money ou Airtel Money), saisissez le numéro qui envoie et le montant. Vous recevez une référence : envoyez l'argent en indiquant cette référence. Votre solde est crédité quand l'équipe confirme la réception."],
+ ["Pourquoi dois-je indiquer le numéro qui envoie ?","Pour que l'équipe retrouve votre paiement et vérifie qu'il vient bien de vous. Utilisez toujours le même numéro, à votre nom."],
+ ["Quelles cryptomonnaies sont disponibles ?","Actuellement : "+CR.join(', ')+". Vous pouvez les acheter et les vendre contre des MGA dans l'onglet Convertir."],
+ ["Comment convertir mes MGA en USDT ?","Ouvrez l'onglet Convertir, choisissez MGA puis USDT, saisissez le montant et confirmez. Le cours appliqué est affiché avant la validation : il est différent à l'achat (MGA → crypto) et à la vente (crypto → MGA)."],
+ ["Quel réseau choisir pour déposer ou retirer ?","Choisissez toujours le même réseau que la plateforme de l'autre côté (par exemple TRC20 pour un USDT envoyé depuis un compte TRON). Un mauvais réseau peut faire perdre définitivement les fonds : vérifiez avant de confirmer."],
+ ["Qu'est-ce que le memo (ou tag) ?","Certaines cryptos (XRP, TON, XLM) utilisent une adresse commune et un memo / tag pour identifier votre compte. Au dépôt, copiez l'adresse ET le memo. Au retrait, saisissez le memo demandé par la plateforme de destination : sans memo correct, les fonds peuvent être perdus."],
+ ["Comment déposer une crypto ?","Touchez « Dépôt », choisissez la crypto puis le réseau : votre adresse personnelle s'affiche, copiez-la. Envoyez uniquement cette crypto, sur ce réseau. Ensuite, déclarez votre dépôt (adresse d'envoi, txid, montant) : l'équipe le vérifie puis crédite votre solde."],
+ ["À quoi servent les frais ?","Deux sortes de frais. 1) La marge de conversion : la différence entre le prix d'achat et le prix de vente, qui rémunère la plateforme. 2) Les frais réseau lors d'un retrait crypto : ils couvrent les frais de la blockchain payés pour envoyer votre crypto. Ils sont affichés avant chaque confirmation."],
+ ["Pourquoi choisir le type de destination au retrait ?","Une plateforme d'échange (Binance, OKX, Bybit…) exige presque toujours un memo / tag pour XRP, TON ou XLM, alors qu'un portefeuille personnel n'en demande pas. Le choix du type de destination applique les bonnes règles et évite de perdre vos fonds."],
+ ["Comment retirer mes cryptos vers une autre plateforme ?","Dans Mes actifs, touchez la crypto puis « Envoyer ». Choisissez le réseau, collez l'adresse du destinataire, saisissez la quantité et confirmez. Les frais réseau sont indiqués avant l'envoi. Les retraits sont vérifiés par l'équipe avant envoi, et un envoi crypto est irréversible."],
+ ["Comment retirer mes MGA vers Mobile Money ?","Dans Mes actifs, touchez MGA puis « Retirer », choisissez l'opérateur, saisissez le numéro qui reçoit, le nom du titulaire et le montant."],
+ ["Pourquoi faire la vérification KYC ?","Le KYC confirme votre identité. Sans KYC, les retraits MGA sont limités à "+fmt('MGA',LIMIT_NO_KYC)+" par opération et les retraits crypto ne sont pas possibles. Demandez-le depuis votre profil."],
+ ["Comment fonctionne le parrainage ?","Dans Mon profil › Parrainage, copiez votre code et partagez-le. Vos amis le saisissent à la création de leur compte."]
+];
+const faqHTML=()=>FAQ.map(f=>`<details class="faq"><summary>${esc(f[0])}</summary><p>${esc(f[1])}</p></details>`).join('');
+function filterFaq(){const q=val('faq_q').toLowerCase();document.querySelectorAll('.faq').forEach(d=>{d.style.display=d.textContent.toLowerCase().includes(q)?'':'none'})}
+function filterQ(){ui.qq=val('q_q');const q=ui.qq.toLowerCase();document.querySelectorAll('.qrow').forEach(r=>{r.style.display=r.dataset.n.includes(q)?'':'none'})}
+
+/* ---------- vues ---------- */
+function headerBar(logged){const dark=document.documentElement.dataset.theme==='dark';
+  return `<div class="ribbon">BÊTA FERMÉE · accès limité</div>
+  <header><div>${logged?`<button class="ib" data-act="goTab" data-t="account" aria-label="Mon profil et paramètres">${ic('user',34)}${(isAdmin()&&S.admCnt&&S.admCnt.total)?`<span class="notif">${S.admCnt.total}</span>`:''}</button>`:''}</div>
+  <div class="hr"><button class="ib" data-act="toggleTheme" aria-label="${dark?'Passer en mode clair':'Passer en mode sombre'}">${ic(dark?'sun':'moon',28)}</button></div></header>`}
+
+function authView(){const reg=ui.auth==='register';
+  return headerBar(false)+`<div class="auth"><div class="brandbig">E-POKETR'BY</div><div class="muted">Échange crypto ↔ Ariary (MGA)</div>
+  <div class="card" style="margin-top:22px">
+   <h2 style="margin-top:0">${reg?'Créer un compte':'Se connecter'}</h2>
+   ${reg?'<label for="a_name">Nom et prénom</label><input id="a_name" autocomplete="name">':''}
+   <label for="a_phone">Numéro de téléphone</label><input id="a_phone" inputmode="numeric" maxlength="10" placeholder="0341234567" autocomplete="tel">
+   <label for="a_pin">Code PIN (6 chiffres)</label><input id="a_pin" type="password" inputmode="numeric" maxlength="6" autocomplete="off">
+   ${reg?'<label for="a_ref">Code de parrainage (facultatif)</label><input id="a_ref" autocomplete="off" placeholder="EPXXXXXX">':''}
+   <button class="p full" style="margin-top:18px" data-act="${reg?'doRegister':'doLogin'}">${reg?'Créer mon compte':'Se connecter'}</button>
+   <button class="s full" style="margin-top:10px" data-act="switchAuth">${reg?"J'ai déjà un compte":'Nouveau compte'}</button>
+   ${isStandalone()?'':'<button class="s full sm" style="margin-top:14px" data-act="sheetInstall">Installer l\'application sur l\'écran d\'accueil</button>'}
+  </div></div>`}
+
+function newsHTML(){return `<div class="newslist">
+   <div class="slide s1" data-act="swapTo" data-a="USDT">${logo('USDT',64)}<b>Tether USDT</b><span class="t">Retirez vos USDT depuis votre plateforme et échangez-les en toute sécurité contre des MGA.</span></div>
+   <div class="slide s2" data-act="goTabClose" data-t="quotes"><div style="display:flex">${['BTC','ETH','BNB','SOL'].map(a=>logo(a,44)).join('')}</div><b>${CR.length} cryptos, plusieurs réseaux</b><span class="t">Achetez et vendez ${CR.slice(0,5).join(', ')}… contre des MGA.</span></div>
+   <div class="slide s3" data-act="sheetInvite"><div class="logo" style="width:64px;height:64px;background:#0A84FF">${ic('invite',34)}</div><b>Parrainez vos amis</b><span class="t">Partagez votre code de parrainage et invitez vos proches sur E-POKETR'BY.</span></div></div>`}
+
+function annHTML(){
+  return (S.ann||[]).map(a=>{const lv=['info','success','warning','danger'].includes(a.level)?a.level:'info';
+    return `<div class="ann ${lv}"><b>${esc(a.title||ANN_LABEL[lv])}</b>${esc(a.body)}</div>`}).join('')}
+const ANN_LABEL={info:'Information',success:'Bonne nouvelle',warning:'Attention',danger:'Important'};
+function homeView(){
+  return `${annHTML()}
+   <div class="row" style="margin-top:14px"><div><div class="muted">Total solde</div><div class="big num">${fmt('MGA',totalMGA())}</div></div>
+   <button class="s pill" data-act="goTab" data-t="wallet">Mes actifs</button></div>
+   <div class="grid2" style="margin-top:22px">
+    <button class="p btnic" data-act="sheetDeposit">${ic('plus',20)}Dépôt</button>
+    <button class="s btnic" data-act="sheetWithdraw">${ic('minus',20)}Retrait</button></div>
+   <h2>FAQ Tutoriel</h2>
+   <div class="search">${ic('search',22)}<input id="faq_q" type="search" placeholder="Rechercher dans la FAQ…" oninput="filterFaq()" aria-label="Rechercher dans la FAQ"></div>
+   ${faqHTML()}`}
+
+function quotesView(){
+  const q=(ui.qq||'').toLowerCase();
+  const rows=CR.map(a=>{const c=chgOf(a),n=(a+' '+ASSETS[a].name).toLowerCase(),sp=S.cg[a]&&S.cg[a].spark,ok=priceOk(a);
+    return `<div class="card qrow clk" data-act="sheetAsset" data-a="${a}" data-n="${esc(n)}" ${n.includes(q)?'':'style="display:none"'}>
+     <div class="row"><div class="who">${logo(a)}<div><b>${a}</b><div class="muted">${ASSETS[a].name}</div></div></div>
+     ${spark(sp)}
+     <div style="text-align:right" class="num">${ok?`<div style="font-size:13px"><span class="muted">Achat</span> <b>${fmt('MGA',Math.round(buyPx(a)))}</b></div><div style="font-size:13px"><span class="muted">Vente</span> <b>${fmt('MGA',Math.round(sellPx(a)))}</b></div>`:'<b>Indisponible</b>'}${c==null?'':`<div class="${c>=0?'pos':'neg'}" style="font-size:13px"><b>${pct(c)}</b></div>`}</div></div></div>`}).join('');
+  return `<h2 style="margin-top:14px">Cotation</h2>
+   <div class="note" style="margin:-4px 0 12px"><b>Achat</b> : prix auquel vous achetez la crypto avec vos MGA. <b>Vente</b> : prix auquel vous vendez votre crypto contre des MGA. La variation sur 24 h vient de CoinGecko (indicatif).</div>
+   <div class="search" style="margin-bottom:12px">${ic('search',22)}<input id="q_q" type="search" value="${esc(ui.qq||'')}" placeholder="Rechercher une crypto…" oninput="filterQ()" aria-label="Rechercher une crypto"></div>
+   ${rows}`}
+
+function swapView(){const s=ui.swap;
+  const fromOpts=['MGA',...CR],toOpts=s.from==='MGA'?CR:['MGA'];
+  const opt=(list,sel)=>list.map(o=>`<option ${o===sel?'selected':''}>${o}</option>`).join('');
+  const c=swapCrypto(s.from,s.to),ok=priceOk(c);
+  return `<h2 style="margin-top:14px">Convertir</h2>
+   ${ok?'':`<div class="warn">La cotation de ${c} est momentanément indisponible. Les conversions sont suspendues pour cet actif ; réessayez dans un instant.</div>`}
+   <div class="card"><div class="q-line"><span class="muted">Vous payez</span><span class="muted">Solde : <b class="num">${fmt(s.from,bal(s.from))}</b></span></div>
+    <div class="swgrid" style="margin-top:8px"><input id="sw_amt" inputmode="decimal" value="${esc(s.amt)}" placeholder="0" oninput="calcSwap()" aria-label="Montant à payer">
+     <select id="sw_from" onchange="setSwap()" aria-label="Monnaie payée">${opt(fromOpts,s.from)}</select></div>
+    <button class="s sm" style="margin-top:10px" data-act="swapMax">Tout utiliser</button></div>
+   <div class="flip"><button class="s" data-act="swapFlip" aria-label="Inverser">${ic('updown',22)}</button></div>
+   <div class="card"><span class="muted">Vous recevez (estimation)</span>
+    <div class="swgrid" style="margin-top:8px"><div class="swout num" id="sw_out">0</div>
+     <select id="sw_to" onchange="setSwap()" aria-label="Monnaie reçue">${opt(toOpts,s.to)}</select></div></div>
+   <div class="card"><div class="row"><span class="muted">Cours appliqué</span><b class="num" id="sw_rate"></b></div>
+    <div class="row"><span class="muted">Minimum</span><b class="num">${fmt('MGA',MIN_MGA)}</b></div></div>
+   <button class="p full" data-act="doSwap" ${ok?'':'disabled'}>Confirmer la conversion</button>
+   <div class="note">Le montant définitif est calculé par le serveur au moment de la confirmation. Pour passer d'une crypto à une autre, vendez d'abord en MGA puis rachetez.</div>`}
+
+const sortedAssets=()=>['MGA',...CR].map((a,i)=>({a,i,v:a==='MGA'?bal('MGA'):bal(a)*px(a)})).sort((x,y)=>(y.v-x.v)||(x.i-y.i)).map(x=>x.a);
+const ST={pending:'En attente',sent:'Envoyé',rejected:'Refusé',confirmed:'Confirmé',credited:'Crédité'};
+const stBadge=s=>`<span class="st st-${esc(s)}">${esc(ST[s]||s)}</span>`;
+/* Le grand livre est en lecture seule : la ligne « Retrait … (en cours) » ne peut pas changer.
+   Le VRAI statut d'un retrait est dans la table des retraits : on l'affiche à la place. */
+function histItems(asset){const it=[];
+  S.ledger.forEach((l,i)=>{if(/\(en cours\)$/.test(l.type)||l.type==='Retrait annulé')return;if(!asset||l.asset===asset)it.push({k:'l',l,i,t:l.created_at})});
+  S.pwd.forEach(w=>{if(!asset||w.asset===asset)it.push({k:'w',w,t:w.created_at})});
+  S.pdep.forEach(d=>{if(d.status!=='confirmed'&&(!asset||asset==='MGA'))it.push({k:'d',d,t:d.created_at})});
+  S.claims.forEach(c=>{if(c.status!=='credited'&&(!asset||c.asset===asset))it.push({k:'c',c,t:c.created_at})});
+  return it.sort((x,y)=>new Date(y.t)-new Date(x.t))}
+function histRows(items,showAsset){return items.map(it=>{
+  if(it.k==='l'){const l=it.l,amt=Number(l.amount);
+    return `<div class="row clk" data-act="sheetTx" data-i="${it.i}"><div><b>${esc(l.type)}</b><div class="muted">${esc(fdate(l.created_at))}${showAsset?' · '+l.asset:''}</div></div><div class="num ${amt>=0?'pos':'neg'}"><b>${amt>=0?'+':''}${fmt(l.asset,amt)}</b></div></div>`}
+  if(it.k==='w'){const w=it.w,neg=w.status!=='rejected';
+    return `<div class="row clk" data-act="sheetWd" data-id="${w.id}"><div><b>Retrait ${w.asset}</b> ${stBadge(w.status)}<div class="muted">${esc(fdate(w.created_at))}${showAsset?' · '+w.asset:''}</div></div><div class="num ${neg?'neg':'muted'}"><b>${neg?'−':''}${fmt(w.asset,Number(w.amount))}</b></div></div>`}
+  if(it.k==='d'){const d=it.d;
+    return `<div class="row clk" data-act="sheetDepReq" data-id="${d.id}"><div><b>Dépôt MGA</b> ${stBadge(d.status)}<div class="muted">${esc(fdate(d.created_at))} · ${esc(d.operator)}</div></div><div class="num ${d.status==='rejected'?'muted':'pos'}"><b>${d.status==='rejected'?'':'+'}${fmt('MGA',Number(d.amount))}</b></div></div>`}
+  const c=it.c;
+  return `<div class="row clk" data-act="sheetClaim" data-id="${c.id}"><div><b>Dépôt ${c.asset}</b> ${stBadge(c.status)}<div class="muted">${esc(fdate(c.created_at))}${showAsset?' · '+c.asset:''}</div></div><div class="num ${c.status==='rejected'?'muted':'pos'}"><b>${c.status==='rejected'?'':'+'}${fmt(c.asset,Number(c.amount))}</b></div></div>`}).join('')}
+
+function walletView(){
+  const cards=sortedAssets().map(a=>{
+    const isM=a==='MGA',open=ui.openAsset===a,b=bal(a),hist=histItems(a),noNet=!isM&&!ASSETS[a].nets.length;
+    const head=`<div class="row clk" data-act="toggleAsset" data-a="${a}" aria-expanded="${open}"><div class="who">${logo(a,40,isM?null:net0(a))}
+      <div><b>${a}</b><div class="muted">${isM?'Ariary malagasy · Mobile Money':ASSETS[a].name+' · '+(noNet?'aucun réseau actif':ASSETS[a].nets.map(n=>n[0]).join(', '))}</div></div></div>
+      <div style="text-align:right" class="num"><b>${fmt(a,b)}</b><div class="muted">${isM?'':'≈ '+fmt('MGA',b*px(a))}</div></div></div>`;
+    let panel='';
+    if(open){
+      const btns=isM
+        ?`<div class="grid2"><button class="p" data-act="sheetDepMGA">Déposer</button><button class="s" data-act="sheetWdMGA">Retirer</button></div>
+          <div class="grid2"><button class="s" data-act="swapTo" data-a="USDT">Convertir</button><button class="s" data-act="sheetAsset" data-a="MGA">Détails</button></div>`
+        :`<div class="grid2"><button class="p" data-act="sheetCryIn" data-a="${a}">Recevoir</button><button class="s" data-act="sheetCryOut" data-a="${a}">Envoyer</button></div>
+          <div class="grid2"><button class="s" data-act="swapTo" data-a="${a}">Acheter</button><button class="s" data-act="swapFrom" data-a="${a}">Vendre</button></div>
+          <button class="s full" style="margin-bottom:10px" data-act="sheetAsset" data-a="${a}">Détails de l'actif</button>`;
+      panel=`<div class="apanel">${btns}<div class="muted" style="margin:6px 0 4px"><b>Historique</b></div>
+        ${hist.length?histRows(hist.slice(0,8)):'<div class="note">Aucune transaction pour cet actif.</div>'}
+        ${hist.length>8?`<button class="s sm full" style="margin-top:10px" data-act="sheetAssetHistory" data-a="${a}">Tout voir (${hist.length})</button>`:''}</div>`}
+    return `<div class="card">${head}${panel}</div>`}).join('');
+  return `<div class="card" style="margin-top:14px"><div class="muted">Total solde</div><div class="big num">${fmt('MGA',totalMGA())}</div></div>
+   <h2 style="margin-top:6px">Mes actifs</h2>
+   <div class="note" style="margin:-4px 0 10px">Triés par valeur : le solde le plus élevé en premier. Touchez un actif pour voir son historique.</div>
+   ${cards}`}
+
+function statsView(){
+  const items=[{a:'MGA',v:bal('MGA')},...CR.map(a=>({a,v:bal(a)*px(a)}))].filter(x=>x.v>0).sort((x,y)=>y.v-x.v);
+  const tot=items.reduce((s,x)=>s+x.v,0);
+  const col=a=>a==='MGA'?'#F0C451':ASSETS[a].col;
+  const dep=S.ledger.filter(l=>l.type==='Dépôt MGA').reduce((s,l)=>s+Number(l.amount),0);
+  const wd=S.pwd.filter(w=>w.asset==='MGA'&&w.status!=='rejected').reduce((s,w)=>s+Number(w.amount),0);
+  const vol=S.swaps.reduce((s,x)=>s+(x.from_asset==='MGA'?Number(x.from_amount):Number(x.from_amount)*Number(x.price_mga)),0);
+  const fees=S.swaps.reduce((s,x)=>{const v=x.from_asset==='MGA'?Number(x.from_amount):Number(x.from_amount)*Number(x.price_mga);return s+v*Number(x.fee_rate)},0);
+  const mv=CR.map(a=>({a,c:chgOf(a)})).filter(x=>x.c!=null).sort((x,y)=>y.c-x.c);
+  const mrow=x=>`<div class="row clk" data-act="sheetAsset" data-a="${x.a}"><div class="who">${logo(x.a,32)}<b>${x.a}</b></div><b class="num ${x.c>=0?'pos':'neg'}">${pct(x.c)}</b></div>`;
+  const box=(l,v)=>`<div class="stat"><span class="muted">${l}</span><b class="num">${v}</b></div>`;
+  return `<h2 style="margin-top:14px">Statistiques</h2>
+   <div class="card"><div class="muted">Valeur totale (estimée)</div><div class="big num">${fmt('MGA',tot)}</div>
+   ${tot>0?`<div class="scale" aria-hidden="true">${items.map(x=>`<i style="width:${x.v/tot*100}%;background:${col(x.a)}"></i>`).join('')}</div>
+    ${items.slice(0,6).map(x=>`<div class="row"><div class="who">${logo(x.a,28)}<b>${x.a}</b></div>
+     <div style="text-align:right" class="num"><b>${(x.v/tot*100).toLocaleString('fr-FR',{maximumFractionDigits:1})} %</b><div class="muted">${fmt('MGA',x.v)}</div></div></div>`).join('')}`
+   :'<div class="note">Déposez des MGA pour voir la répartition de vos actifs.</div>'}</div>
+   <h2>Activité</h2>
+   <div class="sgrid">${box('Dépôts MGA',fmt('MGA',dep))}${box('Retraits MGA',fmt('MGA',wd))}${box('Conversions',S.swaps.length)}${box('Volume converti',fmt('MGA',vol))}${box('Frais payés',fmt('MGA',fees))}${box('Opérations',S.ledger.length)}</div>
+   ${mv.length?`<h2>Marché · variation 24 h</h2>
+   <div class="card"><div class="muted" style="margin-bottom:8px">Plus fortes hausses</div>${mv.slice(0,3).map(mrow).join('')}</div>
+   <div class="card"><div class="muted" style="margin-bottom:8px">Plus fortes baisses</div>${mv.slice(-3).reverse().map(mrow).join('')}</div>`:''}`}
+
+function historyBlock(){const h=histItems();
+  return `<h2>Historique</h2>`+(h.length?`<div class="card">`+histRows(h.slice(0,40),true)+`</div>`:'<div class="card muted">Aucune opération pour le moment.</div>')}
+
+function accountView(){const m=S.me;
+  return `<h2 style="margin-top:14px">Mon profil</h2>
+   <div class="card"><div class="row"><span>Nom</span><b>${esc(m.name)}</b></div>
+   <div class="row"><span>Téléphone</span><b class="num">${esc(m.phone)}</b></div>
+   <div class="row"><span>Vérification (KYC)</span><b>${kyc()?'Validée':'Non effectuée'}</b></div></div>
+   ${kyc()?'':'<button class="p full" data-act="askKyc">Demander la vérification KYC</button><div class="note">Vous serez guidé par l\'équipe (pièce d\'identité + selfie) via WhatsApp.</div>'}
+   <h2>Paramètres</h2>
+   <button class="menu" data-act="sheetLang">${ic('globe',24)}<span>Langue<br><span class="muted">Français</span></span></button>
+   <button class="menu" data-act="sheetInvite">${ic('invite',24)}<span>Parrainage<br><span class="muted">Code : ${esc(m.referral_code||'')}</span></span></button>
+   <button class="menu" data-act="sheetNews">${ic('news',24)}<span>Actualités</span></button>
+   <button class="menu" data-act="sheetSupport">${ic('head',24)}<span>Aide et support</span></button>
+   ${isStandalone()?'':`<button class="menu" data-act="sheetInstall">${ic('plus',24)}<span>Installer l'application<br><span class="muted">Ajouter sur l'écran d'accueil</span></span></button>`}
+   ${isAdmin()?`<button class="menu" data-act="goTab" data-t="admin">${ic('shield',24)}<span>Administration${(S.admCnt&&S.admCnt.total)?` <span class="notif" style="position:static;display:inline-flex">${S.admCnt.total}</span>`:''}<br><span class="muted">Demandes, annonces, réseaux, cours, clients</span></span></button>`:''}
+   <h2>Affichage</h2><div class="seg"><button class="${THEME==='light'?'on':''}" data-act="theme" data-m="light">Clair</button><button class="${THEME==='dark'?'on':''}" data-act="theme" data-m="dark">Sombre</button><button class="${THEME==='auto'?'on':''}" data-act="theme" data-m="auto">Auto</button></div>
+   ${historyBlock()}
+   <button class="s full" style="margin-top:14px" data-act="logout">Se déconnecter</button>`}
+
+/* ---------- administration ---------- */
+const ADM=[['dep','Dépôts MGA'],['dcr','Dépôts crypto'],['wd','Retraits'],['ann','Annonces'],['set','Réglages'],['net','Réseaux & frais'],['px','Cours MGA ↔ crypto'],['bil','Bilan'],['cli','Clients'],['cry','Crédit manuel']];
+const EXPL={POLYGON:'https://polygonscan.com/tx/',ARB:'https://arbiscan.io/tx/',OP:'https://optimistic.etherscan.io/tx/',BASE:'https://basescan.org/tx/',AVAXC:'https://snowtrace.io/tx/',TRC20:'https://tronscan.org/#/transaction/',BEP20:'https://bscscan.com/tx/',ERC20:'https://etherscan.io/tx/',BTC:'https://mempool.space/tx/',LTC:'https://litecoinspace.org/tx/',SOL:'https://solscan.io/tx/',DOGE:'https://dogechain.info/tx/',XRP:'https://xrpscan.com/tx/',TON:'https://tonviewer.com/transaction/',XLM:'https://stellar.expert/explorer/public/tx/'};
+const expLink=(net,txid)=>EXPL[net]?`<a class="lnk s sm" style="margin-top:8px" target="_blank" rel="noopener" href="${EXPL[net]}${encodeURIComponent(txid)}">Voir la transaction sur l'explorateur</a>`:'';
+const DEST={exchange:"Plateforme d'échange",wallet:'Portefeuille personnel',other:'Autre'};
+async function admLoad(sec){ui.adm.sec=sec;ui.adm.err='';ui.adm.rows=[];ui.adm.users={};ui.adm.wallets=[];ui.adm.pool=[];ui.adm.addr={};render(true);
+  try{
+    if(sec==='dep'||sec==='wd'||sec==='dcr'){
+      const t=sec==='dep'?'mga_deposits':sec==='wd'?'withdrawals':'crypto_deposit_claims';
+      const rows=await sel(t+'?select=*&status=eq.pending&order=created_at.asc');ui.adm.rows=rows||[];
+      const ids=[...new Set(ui.adm.rows.map(r=>r.user_id))];
+      if(ids.length){
+        const us=await sel('profiles?select=id,name,phone,kyc_level,memo_id&id=in.('+ids.join(',')+')');(us||[]).forEach(u=>ui.adm.users[u.id]=u);
+        if(sec==='dcr'){const ad=await sel('deposit_addresses?select=user_id,network,address&user_id=in.('+ids.join(',')+')');(ad||[]).forEach(x=>ui.adm.addr[x.user_id+'|'+x.network]=x.address)}}
+    }else if(sec==='cli'){ui.adm.rows=await sel('profiles?select=id,name,phone,kyc_level,role,memo_id,created_at&order=created_at.desc&limit=100')||[]}
+    else if(sec==='ann'){ui.adm.rows=await sel('announcements?select=*&order=created_at.desc&limit=30')||[]}
+    else if(sec==='set'){
+      ui.adm.wallets=await sel('platform_wallets?select=asset,network,address&order=asset.asc')||[];
+      ui.adm.pool=await sel('address_pool?select=network,assigned_to&limit=2000')||[]}
+    else if(sec==='bil'){ui.adm.bil={bal:await sel('balances?select=asset,amount&limit=5000')||[],sw:await sel('swaps?select=from_asset,from_amount,price_mga,fee_rate&limit=2000')||[],wd:await sel('withdrawals?select=asset,fee,amount,status&status=eq.sent&limit=2000')||[]}}
+  }catch(e){ui.adm.err=friendlyErr(e)}
+  render(true)}
+function admView(){
+  const a=ui.adm,u=id=>a.users[id]?`${esc(a.users[id].name)} · ${esc(a.users[id].phone)}`:'Client';
+  const netOpts=list=>list.map(n=>`<option value="${n}">${NETS[n].label}</option>`).join('');
+  let body='';
+  if(a.err) body+=`<div class="warn">${esc(a.err)}<br><span class="muted">Si l'erreur parle d'une table ou d'une fonction introuvable, installez d'abord la partie 7 du SQL.</span></div>`;
+  if(a.sec==='dep') body+=(a.rows.length?a.rows.map(r=>`<div class="card"><div class="row"><b>${u(r.user_id)}</b><b class="num">${fmt('MGA',Number(r.amount))}</b></div>
+     <div class="muted">${esc(r.operator)} · de ${esc(r.sender_number)} · réf <b>${esc(r.reference)}</b></div><div class="muted">${esc(fdate(r.created_at))}</div>
+     <div class="grid2" style="margin-top:10px"><button class="p sm" data-act="admConfirmDep" data-id="${r.id}">Confirmer reçu</button><button class="d sm" data-act="admRejectDep" data-id="${r.id}">Refuser</button></div></div>`).join(''):'<div class="card muted">Aucun dépôt MGA en attente.</div>');
+  if(a.sec==='dcr') body+=(a.rows.length?a.rows.map(r=>{const mine=a.addr[r.user_id+'|'+r.network],usr=a.users[r.user_id];
+     return `<div class="card"><div class="row"><b>${u(r.user_id)}</b><b class="num">${fmt(r.asset,Number(r.amount))}</b></div>
+     <div class="muted">${esc(NETS[r.network]?NETS[r.network].label:r.network)} · ${esc(fdate(r.created_at))}</div>
+     <div class="muted" style="margin-top:8px">Envoyé depuis :</div><div class="addr">${esc(r.from_address)}</div>
+     <div class="muted" style="margin-top:8px">Txid :</div><div class="addr">${esc(r.txid)}</div>
+     <div class="muted" style="margin-top:8px">${NETS[r.network]&&NETS[r.network].memo?'Memo / tag du client :':'Adresse de dépôt attribuée au client :'}</div>
+     <div class="addr">${NETS[r.network]&&NETS[r.network].memo?esc(usr?usr.memo_id:'—'):esc(mine||'Aucune adresse attribuée (adresse commune)')}</div>
+     ${expLink(r.network,r.txid)}
+     <div class="note">Vérifiez sur l'explorateur que la transaction est confirmée, que le destinataire est bien l'adresse ci-dessus et que le montant correspond.</div>
+     <div class="grid2" style="margin-top:10px"><button class="p sm" data-act="admConfirmClaim" data-id="${r.id}" data-amt="${r.amount}">Confirmer et créditer</button><button class="d sm" data-act="admRejectClaim" data-id="${r.id}">Refuser</button></div></div>`}).join(''):'<div class="card muted">Aucun dépôt crypto déclaré en attente.</div>');
+  if(a.sec==='wd') body+=(a.rows.length?a.rows.map(r=>`<div class="card"><div class="row"><b>${u(r.user_id)}</b><b class="num">${fmt(r.asset,Number(r.amount))}</b></div>
+     ${r.asset==='MGA'?`<div class="muted">${esc(r.operator)} · vers <b>${esc(r.mobile_number)}</b></div><div class="muted">Titulaire : <b>${esc(r.holder_name||'—')}</b></div>`
+     :`<div class="muted">${esc(NETS[r.network]?NETS[r.network].label:r.network)} · frais perçus ${fmt(r.asset,Number(r.fee))} (à vous de payer les frais réels de la blockchain)</div>
+       <div class="muted">Destination : <b>${esc(DEST[r.dest_type]||'Autre')}</b>${r.dest_name?' · '+esc(r.dest_name):''}</div>
+       <div class="addr">${esc(r.address)}</div>${r.memo?`<div class="muted">Memo/tag : <b>${esc(r.memo)}</b></div>`:''}`}
+     <div class="muted">${esc(fdate(r.created_at))}</div>
+     <div class="grid2" style="margin-top:10px"><button class="p sm" data-act="admDoneWd" data-id="${r.id}" data-a="${r.asset}">Marquer envoyé</button><button class="d sm" data-act="admRejectWd" data-id="${r.id}">Refuser (rembourser)</button></div></div>`).join(''):'<div class="card muted">Aucun retrait en attente.</div>');
+  if(a.sec==='ann') body+=`<div class="card"><b>Nouvelle annonce</b><div class="note">Elle s'affiche en haut de l'écran d'accueil de tous les clients, dans la couleur choisie.</div>
+     <label for="an_title">Titre (facultatif)</label><input id="an_title" maxlength="80" autocomplete="off">
+     <label for="an_body">Message</label><textarea id="an_body" maxlength="500"></textarea>
+     <label for="an_level">Couleur</label><select id="an_level"><option value="info">Bleu · Information</option><option value="success">Vert · Bonne nouvelle</option><option value="warning">Jaune · Attention</option><option value="danger">Rouge · Important</option></select>
+     <label for="an_days">Durée d'affichage (jours, 0 = sans limite)</label><input id="an_days" inputmode="numeric" value="7">
+     <button class="p full" style="margin-top:14px" data-act="admPostAnn">Publier l'annonce</button></div>`
+     +(a.rows.length?'<h2>Annonces publiées</h2>'+a.rows.map(r=>{const lv=['info','success','warning','danger'].includes(r.level)?r.level:'info',exp=r.expires_at&&new Date(r.expires_at).getTime()<Date.now();
+       return `<div class="card"><div class="ann ${lv}" style="margin:0 0 10px"><b>${esc(r.title||ANN_LABEL[lv])}</b>${esc(r.body)}</div>
+       <div class="muted">${esc(fdate(r.created_at))} · ${exp?'expirée':(r.active?'visible':'masquée')}${r.expires_at&&!exp?' · jusqu\'au '+esc(fdate(r.expires_at)):''}</div>
+       <div class="grid2" style="margin-top:10px"><button class="s sm" data-act="admToggleAnn" data-id="${r.id}" data-on="${r.active?0:1}">${r.active?'Masquer':'Afficher'}</button><button class="d sm" data-act="admDelAnn" data-id="${r.id}">Supprimer</button></div></div>`}).join(''):'');
+  if(a.sec==='set'){
+    const nonMemo=Object.keys(NETS).filter(n=>!NETS[n].memo),stat={};
+    a.pool.forEach(p=>{const s=stat[p.network]||(stat[p.network]={free:0,used:0});if(p.assigned_to)s.used++;else s.free++});
+    body+=`<div class="card"><b>Numéros de réception MGA</b><div class="note">Les numéros où les clients envoient leur argent. Ils s'affichent au client quand il fait un dépôt.</div>
+     ${OPS.map((op,i)=>{const x=S.pay[op]||{};return `<label for="pn_${i}">${op} · numéro</label><input id="pn_${i}" inputmode="numeric" maxlength="10" value="${esc(x.number||'')}" placeholder="03XXXXXXXX">
+       <label for="ph_${i}">${op} · nom du titulaire</label><input id="ph_${i}" autocomplete="off" value="${esc(x.holder||'')}">`}).join('')}
+     <button class="p full" style="margin-top:14px" data-act="admSavePay">Enregistrer les numéros</button></div>
+     <div class="card"><b>Adresses de dépôt par client (réserve)</b><div class="note">Chaque client reçoit automatiquement UNE adresse différente par réseau, prise dans cette réserve. Collez ici des adresses que VOUS contrôlez (une par ligne). Testez toujours avec un petit montant.</div>
+     <label for="pool_net">Réseau</label><select id="pool_net">${netOpts(nonMemo)}</select>
+     <label for="pool_list">Adresses (une par ligne)</label><textarea id="pool_list" autocomplete="off"></textarea>
+     <button class="p full" style="margin-top:12px" data-act="admAddPool">Ajouter à la réserve</button>
+     <div style="margin-top:12px">${nonMemo.map(n=>{const s=stat[n]||{free:0,used:0};return `<div class="row"><span>${NETS[n].label}</span><b class="num ${s.free<3?'neg':''}">${s.free} libre(s) · ${s.used} attribuée(s)</b></div>`}).join('')}</div></div>
+     <div class="card"><b>Adresse commune de la plateforme</b><div class="note">Obligatoire pour XRP, TON, XLM (adresse commune + memo propre à chaque client). Pour les autres, elle sert de secours quand la réserve est vide.</div>
+     ${a.wallets.length?a.wallets.map(w=>`<div class="row"><div><b>${esc(w.asset)} · ${esc(w.network)}</b><div class="addr">${esc(w.address)}</div></div></div>`).join(''):'<div class="muted" style="margin-top:8px">Aucune adresse enregistrée.</div>'}
+     <label for="w_asset">Crypto</label><select id="w_asset" onchange="admNets('w_asset','w_net')">${CR.map(c=>`<option>${c}</option>`).join('')}</select>
+     <label for="w_net">Réseau</label><select id="w_net">${ASSETS[CR[0]].nets.map(n=>`<option value="${n[0]}">${NETS[n[0]].label}</option>`).join('')}</select>
+     <label for="w_addr">Adresse</label><input id="w_addr" autocomplete="off">
+     <button class="p full" style="margin-top:12px" data-act="admWallet">Enregistrer l'adresse commune</button></div>
+     <div class="card"><b>Adresse personnelle d'un client (avancé)</b><div class="note">Pour attribuer manuellement une adresse précise à un client.</div>
+     <label for="d_phone">Téléphone du client</label><input id="d_phone" inputmode="numeric" maxlength="10" placeholder="03XXXXXXXX">
+     <label for="d_asset">Crypto</label><select id="d_asset" onchange="admNets('d_asset','d_net')">${CR.filter(c=>!(NETS[net0(c)]||{}).memo).map(c=>`<option>${c}</option>`).join('')}</select>
+     <label for="d_net">Réseau</label><select id="d_net">${ASSETS.USDT.nets.map(n=>`<option value="${n[0]}">${NETS[n[0]].label}</option>`).join('')}</select>
+     <label for="d_addr">Adresse</label><input id="d_addr" autocomplete="off">
+     <button class="p full" style="margin-top:12px" data-act="admClientAddr">Enregistrer</button></div>`}
+  if(a.sec==='net'){const rows=S.netRows||[];
+    body+=`<div class="note" style="margin:-4px 0 10px">Les <b>frais réseau</b> sont facturés au client à chaque retrait. Ils servent à couvrir les frais de la blockchain que <b>vous</b> payez en envoyant la crypto : réglez-les près des frais réels. Un réseau ne doit être activé que si vous avez des adresses de dépôt pour lui.</div>`
+    +(rows.length?CR.map(c=>{const list=rows.filter(r=>r.asset===c);
+      return `<div class="card"><div class="who">${logo(c,30)}<b>${c}</b></div>${list.map(r=>`<div class="row"><div><b>${esc(r.label)}</b> <span class="badge">${esc(r.network)}</span>${r.enabled?'':' <span class="badge">désactivé</span>'}<div class="muted">Frais ${fmt(c,Number(r.fee))} · min ${fmt(c,Number(r.min_withdraw))}${r.needs_memo?' · memo':''}</div></div>
+        <button class="s sm" data-act="admEditNet" data-a="${c}" data-n="${esc(r.network)}">Modifier</button></div>`).join('')||'<div class="muted">Aucun réseau.</div>'}</div>`}).join('')
+      :'<div class="warn">La liste des réseaux n\'est pas encore disponible. Installez les parties 7E du SQL puis rechargez.</div>')
+    +`<div class="card"><b>Ajouter un réseau blockchain</b><div class="note">Ex. Polygon, Arbitrum, Base… pour une crypto. Il sera désactivé par défaut tant que vous ne l'activez pas.</div>
+     <label for="n_asset">Crypto</label><select id="n_asset">${CR.map(c=>`<option>${c}</option>`).join('')}</select>
+     <label for="n_code">Code du réseau (majuscules, ex. POLYGON)</label><input id="n_code" maxlength="12" autocomplete="off">
+     <label for="n_label">Nom affiché</label><input id="n_label" autocomplete="off" placeholder="ex. Polygon">
+     <label for="n_kind">Type d'adresse</label><select id="n_kind"><option value="evm">Ethereum / EVM (0x…)</option><option value="tron">TRON (T…)</option><option value="sol">Solana</option><option value="btc">Bitcoin</option><option value="ton">TON</option><option value="gen">Autre (vérification souple)</option></select>
+     <label for="n_memo">Memo / tag obligatoire ?</label><select id="n_memo"><option value="">Non</option><option value="num">Oui, un nombre</option><option value="txt">Oui, un texte</option></select>
+     <div class="grid2"><div><label for="n_fee">Frais de retrait</label><input id="n_fee" inputmode="decimal" value="0"></div><div><label for="n_min">Retrait minimum</label><input id="n_min" inputmode="decimal" value="0"></div></div>
+     <button class="p full" style="margin-top:12px" data-act="admAddNet">Ajouter le réseau</button></div>`}
+  if(a.sec==='bil'){const b=a.bil;
+    if(!b) body+='<div class="card muted">Chargement…</div>';
+    else{const liab={},fees={};let marge=0;
+      b.bal.forEach(x=>liab[x.asset]=(liab[x.asset]||0)+Number(x.amount));
+      b.sw.forEach(s=>{const v=s.from_asset==='MGA'?Number(s.from_amount):Number(s.from_amount)*Number(s.price_mga);marge+=v*Number(s.fee_rate)});
+      b.wd.forEach(w=>fees[w.asset]=(fees[w.asset]||0)+Number(w.fee||0));
+      body+=`<div class="card"><b>Ce que vous devez aux clients</b><div class="note">Total des soldes des clients : vos portefeuilles et comptes Mobile Money doivent toujours couvrir ces montants.</div>
+       ${['MGA',...CR].filter(c=>liab[c]>0).map(c=>`<div class="row"><div class="who">${logo(c,26)}<b>${c}</b></div><b class="num">${fmt(c,liab[c])}</b></div>`).join('')||'<div class="muted" style="margin-top:8px">Aucun solde.</div>'}</div>
+       <div class="card"><b>Vos revenus</b>
+       <div class="row"><span>Marge sur les conversions (estimée)</span><b class="num">${fmt('MGA',Math.round(marge))}</b></div>
+       ${Object.keys(fees).length?Object.keys(fees).map(c=>`<div class="row"><span>Frais de retrait perçus · ${c}</span><b class="num">${fmt(c,fees[c])}</b></div>`).join(''):'<div class="row"><span>Frais de retrait perçus</span><b>—</b></div>'}
+       <div class="note">La marge de conversion est à vous. Les frais de retrait sont prélevés sur le client et restent chez vous : c'est à vous de payer les vrais frais de la blockchain en envoyant la crypto. Ils sont donc un gain si vous les réglez au-dessus du coût réel, et une perte s'ils sont en dessous.</div></div>`}}
+  if(a.sec==='set') body+=`<div class="card"><b>Alertes sur votre téléphone</b>
+     <div class="note">Recevez une notification à chaque nouvelle demande (dépôt, retrait, dépôt crypto, nouveau client), même application fermée. 1) Installez l'application gratuite « ntfy ». 2) Abonnez-vous à un sujet secret (générez-en un ci-dessous). 3) Enregistrez le même sujet ici.</div>
+     <label for="nt_topic">Sujet secret ntfy</label><input id="nt_topic" autocomplete="off" value="${esc(S.set.ntfy_topic||'')}" placeholder="ex. epoketrby-k39x82hd7q">
+     <div class="grid2" style="margin-top:10px"><button class="s" data-act="admRandTopic">Générer un sujet</button><button class="p" data-act="admSaveNtfy">Enregistrer</button></div>
+     <button class="s full" style="margin-top:10px" data-act="admTestNtfy">Envoyer une notification de test</button>
+     <div class="row" style="margin-top:12px"><span>Son d'alerte dans l'application</span><button class="s sm" data-act="admSound">${LS.get('epoketrby_sound')==='0'?'NON':'OUI'}</button></div></div>`;
+  if(a.sec==='cry') body+=`<div class="card"><b>Créditer un dépôt crypto constaté (sans déclaration du client)</b>
+     <label for="c_phone">Téléphone du client</label><input id="c_phone" inputmode="numeric" maxlength="10" placeholder="03XXXXXXXX">
+     <label for="c_asset">Crypto</label><select id="c_asset" onchange="admNets('c_asset','c_net')">${CR.map(c=>`<option>${c}</option>`).join('')}</select>
+     <label for="c_net">Réseau</label><select id="c_net">${ASSETS[CR[0]].nets.map(n=>`<option value="${n[0]}">${NETS[n[0]].label}</option>`).join('')}</select>
+     <label for="c_txid">Identifiant de transaction (txid)</label><input id="c_txid" autocomplete="off">
+     <label for="c_amt">Montant reçu</label><input id="c_amt" inputmode="decimal">
+     <button class="p full" style="margin-top:14px" data-act="admCredit">Créditer</button>
+     <div class="note">Un même txid ne peut être crédité qu'une fois.</div></div>`;
+  if(a.sec==='px') body+=admPrices();
+  if(a.sec==='cli') body+=(a.rows.length?a.rows.map(r=>`<div class="card"><div class="row"><div><b>${esc(r.name)}</b>${r.role==='admin'?' <span class="badge">admin</span>':''}<div class="muted num">${esc(r.phone)} · memo ${esc(r.memo_id)}</div></div>
+     <button class="${r.kyc_level>0?'s':'p'} sm" data-act="admKyc" data-id="${r.id}" data-l="${r.kyc_level>0?0:1}">${r.kyc_level>0?'KYC ✓ (retirer)':'Valider KYC'}</button></div></div>`).join(''):'<div class="card muted">Aucun client.</div>');
+  return `<h2 style="margin-top:14px">Administration</h2>
+   <div class="admseg">${ADM.map(x=>{const n=S.admCnt&&S.admCnt[x[0]];return `<button class="${a.sec===x[0]?'on':''}" data-act="admSec" data-s="${x[0]}">${x[1]}${n?' ('+n+')':''}</button>`}).join('')}</div>${body}`}
+function admPrices(){
+  const auto=LS.get('epoketrby_autosync')!=='0',fx=LS.get('epoketrby_usdmga')||'';
+  const pc=v=>rnd(v*100,3);
+  return `<div class="card"><b>Marges par défaut</b><div class="note">Cours appliqué = prix du marché ± marge. Marge d'achat : ajoutée quand le client achète de la crypto avec des MGA. Marge de vente : retirée quand il vend sa crypto contre des MGA.</div>
+   <div class="grid2"><div><label for="gm_buy">MGA → crypto (achat) %</label><input id="gm_buy" inputmode="decimal" value="${pc(S.gm.buy)}"></div>
+   <div><label for="gm_sell">crypto → MGA (vente) %</label><input id="gm_sell" inputmode="decimal" value="${pc(S.gm.sell)}"></div></div>
+   <button class="p full" style="margin-top:12px" data-act="admSaveMargins">Enregistrer les marges</button></div>
+   <div class="card"><b>Prix du marché (CoinGecko → MGA)</b>
+   <label for="p_fx">Taux 1 $ = ? MGA (vide = taux du jour)</label><input id="p_fx" inputmode="decimal" value="${esc(fx)}" placeholder="ex. 4500">
+   <div class="grid2" style="margin-top:12px"><button class="p" data-act="admSync">Synchroniser maintenant</button><button class="s" data-act="admAuto">Auto : ${auto?'OUI':'NON'}</button></div>
+   <div class="note">Les conversions sont bloquées si le prix du marché a plus de ${PRICE_MAX_AGE_MIN} minutes (sauf cours manuel). Tant que cette page est ouverte avec « Auto : OUI », les prix sont mis à jour chaque minute.</div></div>
+   <h2>Cours par crypto</h2>
+   ${CR.map(c=>{const x=S.assets[c]||{},age=priceAge(c),manual=(x.mb!=null||x.ms!=null),ok=priceOk(c);
+     return `<div class="card"><div class="row"><div class="who">${logo(c,34)}<div><b>${c}</b>${manual?' <span class="badge">manuel</span>':''}<div class="muted">Marché : ${refPx(c)?fmt('MGA',refPx(c)):'—'} · ${isFinite(age)?'il y a '+Math.round(age)+' min':'jamais mis à jour'}</div></div></div></div>
+      <div class="row"><span class="muted">MGA → ${c} (achat client)</span><b class="num">${buyPx(c)?fmt('MGA',Math.round(buyPx(c))):'indisponible'}</b></div>
+      <div class="row"><span class="muted">${c} → MGA (vente client)</span><b class="num">${sellPx(c)?fmt('MGA',Math.round(sellPx(c))):'indisponible'}</b></div>
+      ${x.bm!=null||x.sm!=null?`<div class="muted" style="margin-top:6px">Marges propres : achat ${x.bm!=null?pc(x.bm)+' %':'défaut'} · vente ${x.sm!=null?pc(x.sm)+' %':'défaut'}</div>`:''}
+      <button class="s sm full" style="margin-top:10px" data-act="admEditPx" data-a="${c}">Modifier le cours de ${c}</button></div>`}).join('')}`}
+
+function nav(){const T=[['home','Accueil','home'],['quotes','Cotation','quote'],['swap','Convertir','swap'],['stats','Statistiques','stats'],['wallet','Portefeuille','wallet']];
+  return `<nav><div>${T.map(t=>`<button class="${ui.tab===t[0]?'on':''}" data-act="goTab" data-t="${t[0]}">${ic(t[2],26)}<span>${t[1]}</span></button>`).join('')}</div></nav>`}
+
+function render(keep){const app=$('#app');const y=window.scrollY;
+  if(!SESS){app.innerHTML=authView();return}
+  if(!S.me||!S.loaded){app.innerHTML=headerBar(false)+'<main><div class="card muted" style="margin-top:20px">Chargement…</div></main>';return}
+  const V={home:homeView,quotes:quotesView,swap:swapView,stats:statsView,account:accountView,wallet:walletView,admin:admView};
+  if(ui.tab==='admin'&&!isAdmin()) ui.tab='home';
+  app.innerHTML=headerBar(true)+'<main>'+V[ui.tab]()+'</main>'+nav();
+  if(ui.tab==='swap') calcSwap(true);
+  window.scrollTo(0,keep?y:0)}
+
+/* ---------- fenêtres ---------- */
+function openSheet(h){$('#sheet').innerHTML=h+'<button class="s full" style="margin-top:12px" data-act="closeSheet">Fermer</button>';$('#sheetWrap').classList.add('open')}
+function closeSheet(){$('#sheetWrap').classList.remove('open')}
+const sheetOpen=()=>$('#sheetWrap').classList.contains('open');
+const opSel=id=>`<label for="${id}">Opérateur</label><select id="${id}">${OPS.map(o=>`<option>${o}</option>`).join('')}</select>`;
+const netSel=(a,net,fn)=>`<label for="f_net">Réseau</label><select id="f_net" onchange="${fn}('${a}',this.value)">${ASSETS[a].nets.map(n=>`<option value="${n[0]}" ${n[0]===net?'selected':''}>${NETS[n[0]].label}</option>`).join('')}</select>`;
+const waLink=txt=>'https://wa.me/261'+SUPPORT.whatsapp.replace(/^0/,'')+'?text='+encodeURIComponent(txt);
+
+async function openCryIn(a,net){if(!ASSETS[a].nets.length){openSheet(`<h3>Recevoir des ${a}</h3><div class="warn">Aucun réseau n'est actif pour ${a} pour le moment. Contactez le support.</div>`);return}
+  net=net||net0(a);const N=NETS[net],tok=(openCryIn.t=(openCryIn.t||0)+1);
+  const head=`<div class="who">${logo(a,46,net)}<h3 style="margin:0">Recevoir des ${a}</h3></div>${netSel(a,net,'openCryIn')}`;
+  openSheet(head+'<div class="note" style="margin-top:12px">Chargement de votre adresse…</div>');
+  let info=null,err='';
+  try{const r=await rpc('get_deposit_info',{p_asset:a,p_network:net});info=Array.isArray(r)?r[0]:null}catch(e){err=friendlyErr(e)}
+  if(tok!==openCryIn.t||!sheetOpen()) return;
+  let body;
+  if(info&&info.address){
+    const personal=info.shared===false;
+    body=`<div class="muted" style="margin-top:10px">${personal?'Votre adresse personnelle':'Adresse de dépôt'} ${a} (${N.label}) :</div><div class="addr">${esc(info.address)}</div>
+      <button class="s sm full" style="margin-top:8px" data-act="copyText" data-t="${esc(info.address)}">Copier l'adresse</button>
+      ${N.memo?`<div class="muted" style="margin-top:12px">${N.memo} (<b>obligatoire</b>) :</div><div class="addr">${esc(info.memo||'')}</div>
+      <button class="s sm full" style="margin-top:8px" data-act="copyText" data-t="${esc(info.memo||'')}">Copier le ${N.memo}</button>
+      <div class="warn"><b>Copiez l'adresse ET le ${N.memo}.</b> L'adresse est commune à tous les clients : sans votre ${N.memo}, les fonds ne peuvent pas être attribués à votre compte.</div>`
+        :(personal?'':'<div class="warn"><b>Adresse commune de la plateforme.</b> Déclarez bien votre dépôt ci-dessous pour que l\'équipe puisse l\'identifier.</div>')}
+      <div class="warn">Envoyez uniquement du <b>${a}</b> via le réseau <b>${N.label}</b>. Un mauvais réseau ou une mauvaise crypto peut entraîner la perte des fonds.</div>
+      <div class="card" style="margin-top:12px"><b>Déclarer mon dépôt</b><div class="note">Après l'envoi, indiquez les détails pour que l'équipe vérifie et crédite votre solde.</div>
+       <label for="f_from">Adresse depuis laquelle vous avez envoyé</label><input id="f_from" autocomplete="off" placeholder="${N.ph}">
+       <label for="f_txid">Identifiant de transaction (txid)</label><input id="f_txid" autocomplete="off">
+       <label for="f_amt">Montant envoyé (${a})</label><input id="f_amt" inputmode="decimal">
+       <button class="p full" style="margin-top:12px" data-act="doClaim" data-a="${a}">Déclarer mon dépôt</button></div>`}
+  else body=`<div class="warn">${err?esc(err):'Aucune adresse de dépôt n\'est disponible pour le moment pour '+a+' ('+N.label+').'} Contactez le support : une adresse vous sera attribuée.</div>
+      <a class="lnk p" style="margin-top:10px" target="_blank" rel="noopener" href="${waLink('Bonjour, je souhaite déposer du '+a+' ('+net+'). Mon numéro : '+S.me.phone)}">Demander mon adresse (WhatsApp)</a>`;
+  openSheet(head+body)}
+function openCryOut(a,net,dest){if(!ASSETS[a].nets.length){openSheet(`<h3>Envoyer des ${a}</h3><div class="warn">Aucun réseau n'est actif pour ${a} pour le moment. Contactez le support.</div>`);return}
+  net=net||net0(a);dest=dest||val('f_dest')||'exchange';const fee=netFee(a,net),N=NETS[net],minW=(NETINFO[a+'|'+net]||{}).min||0;
+  const keepAddr=val('f_addr'),keepName=val('f_dname');
+  openSheet(`<div class="who">${logo(a,46,net)}<h3 style="margin:0">Envoyer des ${a}</h3></div><div class="muted" style="margin-top:8px">Solde : <b>${fmt(a,bal(a))}</b></div>
+   <label for="f_dest">Où envoyez-vous ?</label>
+   <select id="f_dest" onchange="openCryOut('${a}',val('f_net'),this.value)"><option value="exchange" ${dest==='exchange'?'selected':''}>Une plateforme d'échange (Binance, OKX, Bybit…)</option><option value="wallet" ${dest==='wallet'?'selected':''}>Mon portefeuille personnel (Trust Wallet, MetaMask…)</option><option value="other" ${dest==='other'?'selected':''}>Autre</option></select>
+   <label for="f_dname">Nom de la plateforme ou du portefeuille (facultatif)</label><input id="f_dname" autocomplete="off" value="${esc(keepName)}" placeholder="ex. Binance">
+   ${netSel(a,net,'openCryOut')}
+   <div class="muted" style="margin-top:8px">Frais réseau : <b>${fmt(a,fee)}</b> · Minimum : <b>${fmt(a,minW)}</b></div>
+   <div class="note">Les frais réseau couvrent les frais de la blockchain payés lors de l'envoi de votre crypto.</div>
+   ${kyc()?'':'<div class="warn">La vérification KYC est requise pour retirer des cryptos. Demandez-la depuis votre profil.</div>'}
+   <label for="f_addr">Adresse du destinataire</label><input id="f_addr" autocomplete="off" value="${esc(keepAddr)}" placeholder="${N.ph}">
+   ${N.memo?`<label for="f_memo">${N.memo}${dest==='exchange'?' (obligatoire)':''}</label><input id="f_memo" autocomplete="off" placeholder="${N.memoPh}">
+   ${dest==='exchange'
+     ?`<div class="warn"><b>Les plateformes d'échange exigent un ${N.memo.toLowerCase()}.</b> Copiez-le depuis la page de dépôt de ${a} sur cette plateforme. Sans lui, vos fonds peuvent être perdus.</div>`
+     :`<label style="display:flex;gap:10px;align-items:flex-start;font-weight:500"><input id="f_nomemo" type="checkbox" style="width:22px;min-height:22px;margin-top:2px">Mon destinataire n'exige pas de ${N.memo.toLowerCase()}</label>`}`:''}
+   ${dest==='exchange'&&!N.memo?'<div class="note">Vérifiez sur la plateforme de destination que le réseau choisi est bien activé pour le dépôt de '+a+'.</div>':''}
+   <label for="f_amt">Quantité</label><input id="f_amt" inputmode="decimal">
+   <div class="note">Un envoi de crypto est irréversible. L'adresse doit correspondre au réseau ${N.label}. Les retraits sont vérifiés par l'équipe avant l'envoi.</div>
+   <button class="p full" style="margin-top:14px" data-act="doCryOut" data-a="${a}">Envoyer</button>`)}
+
+/* exécute une action serveur avec écran d'attente, rafraîchit les données ensuite */
+async function run(fn,okMsg,after){
+  if(ui.lock) return false;ui.lock=true;$('#busy').classList.add('on');
+  try{const r=await fn();await refresh();if(okMsg)toast(typeof okMsg==='function'?okMsg(r):okMsg);closeSheet();if(after)after(r);render(true);return true}
+  catch(e){toast('⚠ '+friendlyErr(e));return false}
+  finally{ui.lock=false;$('#busy').classList.remove('on')}}
+
+const A = {
+  switchAuth(){ui.auth=ui.auth==='login'?'register':'login';render()},
+  toggleTheme(){setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark')},
+  theme(d){setTheme(d.m)},
+  async doRegister(){const name=val('a_name'),phone=val('a_phone'),pin=val('a_pin'),ref=val('a_ref');
+    if(ui.lock)return;ui.lock=true;$('#busy').classList.add('on');
+    try{await signup(name,phone,pin,ref);await refresh();ui.tab='home';render();loadMarket()}
+    catch(e){toast('⚠ '+friendlyErr(e))}finally{ui.lock=false;$('#busy').classList.remove('on')}},
+  async doLogin(){const phone=val('a_phone'),pin=val('a_pin');
+    if(ui.lock)return;ui.lock=true;$('#busy').classList.add('on');
+    try{await login(phone,pin);await refresh();ui.tab='home';render();loadMarket()}
+    catch(e){toast('⚠ '+friendlyErr(e))}finally{ui.lock=false;$('#busy').classList.remove('on')}},
+  logout(){doLogout()},
+  goTab(d){ui.tab=d.t;if(d.t==='admin')admLoad(ui.adm.sec||'dep');else render()},
+  goTabClose(d){closeSheet();ui.tab=d.t;render()},
+  toggleAsset(d){ui.openAsset=ui.openAsset===d.a?null:d.a;render(true)},
+  swapTo(d){ui.swap={from:'MGA',to:d.a,amt:''};ui.tab='swap';closeSheet();render()},
+  swapFrom(d){ui.swap={from:d.a,to:'MGA',amt:''};ui.tab='swap';closeSheet();render()},
+  swapMax(){ui.swap.amt=String(bal(ui.swap.from));render(true)},
+  swapFlip(){const s=ui.swap;ui.swap=s.from==='MGA'?{from:s.to,to:'MGA',amt:''}:{from:'MGA',to:s.from,amt:''};render(true)},
+  doSwap(){const s=ui.swap,amt=num(s.amt);
+    if(amt<=0) return toast('⚠ Saisissez un montant.');
+    run(()=>rpc('swap',{p_from:s.from,p_to:s.to,p_amount:amt}),r=>'Conversion effectuée : '+fmt(s.to,Number(r)),()=>{ui.swap.amt=''})},
+  closeSheet,
+  askKyc(){window.open(waLink('Bonjour, je souhaite faire la vérification KYC de mon compte E-POKETR\'BY. Nom : '+S.me.name+' · Téléphone : '+S.me.phone),'_blank')},
+  copyCode(){const c=S.me.referral_code||'';
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(c).then(()=>toast('Code copié : '+c),()=>toast('Code : '+c))}else toast('Code : '+c)},
+  shareCode(){const t="Rejoins-moi sur E-POKETR'BY avec mon code de parrainage : "+(S.me.referral_code||'');
+    if(navigator.share){navigator.share({text:t}).catch(()=>{})}else toast(t)},
+  async sheetInstall(){
+    if(INSTALL_EVT){const ev=INSTALL_EVT;INSTALL_EVT=null;try{ev.prompt();await ev.userChoice}catch(e){}return}
+    const ios=/iphone|ipad|ipod/i.test((navigator&&navigator.userAgent)||'');
+    openSheet(`<h3>Installer l'application</h3>
+     ${ios?`<div class="muted">Sur iPhone / iPad (Safari) :</div><div class="card" style="margin-top:8px">1. Touchez le bouton <b>Partager</b> (carré avec une flèche).<br>2. Choisissez <b>« Sur l'écran d'accueil »</b>.<br>3. Touchez <b>Ajouter</b>.</div>`
+       :`<div class="muted">Sur Android (Chrome) :</div><div class="card" style="margin-top:8px">1. Touchez le menu <b>⋮</b> (en haut à droite).<br>2. Choisissez <b>« Installer l'application »</b> ou <b>« Ajouter à l'écran d'accueil »</b>.<br>3. Confirmez.</div>`}
+     <div class="note">L'application doit être ouverte depuis son adresse en ligne (https://…), pas depuis un fichier téléchargé. Une fois installée, elle s'ouvre comme une vraie application.</div>`)},
+  sheetLang(){openSheet(`<h3>Langue</h3><div class="muted">Choisissez la langue de l'application.</div>
+    <button class="p full" style="margin-top:14px"><span class="flag" style="vertical-align:middle;margin-right:8px"></span>Français</button>
+    <button class="s full" style="margin-top:10px" disabled>Malagasy (bientôt)</button>
+    <button class="s full" style="margin-top:10px" disabled>English (bientôt)</button>`)},
+  sheetSupport(){const c=SUPPORT;
+    openSheet(`<h3>Aide et support</h3><div class="muted">Une question ou un problème ? Contactez-nous.</div>
+     <a class="lnk p" style="margin-top:14px" href="${waLink('Bonjour, j\'ai besoin d\'aide. Téléphone : '+(S.me?S.me.phone:''))}" target="_blank" rel="noopener">WhatsApp · ${fmtTel(c.whatsapp)}</a>
+     <a class="lnk s" style="margin-top:10px" href="tel:${esc(c.phone)}">Appeler · ${fmtTel(c.phone)}</a>`)},
+  sheetNews(){openSheet(`<h3>Actualités</h3><div style="margin-top:12px">${newsHTML()}</div>`)},
+  sheetInvite(){openSheet(`<h3>Inviter des amis</h3><div class="muted">Partagez votre code de parrainage. Vos amis le saisissent à la création de leur compte.</div>
+    <div class="card" style="margin:14px 0 0;text-align:center"><div class="muted">Votre code</div><div class="big num" style="letter-spacing:2px">${esc(S.me.referral_code||'')}</div></div>
+    <div class="grid2" style="margin-top:12px"><button class="p" data-act="copyCode">Copier</button><button class="s" data-act="shareCode">Partager</button></div>`)},
+  sheetDeposit(){openSheet(`<h3>Dépôt</h3><div class="muted">Que souhaitez-vous déposer ?</div>
+    <button class="p full" style="margin-top:14px" data-act="sheetDepMGA">MGA (Mobile Money)</button>
+    <div class="muted" style="margin-top:16px">Ou une cryptomonnaie :</div>
+    <div class="cgrid">${CR.map(a=>`<button data-act="sheetCryIn" data-a="${a}">${logo(a,32)}${a}</button>`).join('')}</div>`)},
+  sheetWithdraw(){openSheet(`<h3>Retrait</h3><div class="muted">Que souhaitez-vous retirer ?</div>
+    <button class="p full" style="margin-top:14px" data-act="sheetWdMGA">MGA (Mobile Money)</button>
+    <div class="muted" style="margin-top:16px">Ou une cryptomonnaie :</div>
+    <div class="cgrid">${CR.map(a=>`<button data-act="sheetCryOut" data-a="${a}">${logo(a,32)}${a}</button>`).join('')}</div>`)},
+  sheetTx(d){const l=S.ledger[+d.i];if(!l)return;const amt=Number(l.amount),pending=/en cours/.test(l.type);
+    openSheet(`<h3>Détails de la transaction</h3>
+     <div class="who" style="margin-top:12px">${logo(l.asset,40)}<b>${esc(l.type)}</b></div>
+     <div class="big num ${amt>=0?'pos':'neg'}" style="margin:10px 0">${amt>=0?'+':''}${fmt(l.asset,amt)}</div>
+     <div class="card"><div class="row"><span class="muted">Statut</span><b>${pending?'En cours':'Terminé'}</b></div>
+      <div class="row"><span class="muted">Date</span><b>${esc(fdate(l.created_at))}</b></div>
+      <div class="row"><span class="muted">Actif</span><b>${l.asset}</b></div>
+      <div class="row"><span class="muted">Référence</span><b class="num">${esc(refTx(l.id))}</b></div>
+      ${l.note?`<div class="row"><span class="muted">Détails</span><b style="text-align:right;word-break:break-word">${esc(l.note)}</b></div>`:''}</div>`)},
+  sheetAssetHistory(d){const h=histItems(d.a);
+    openSheet(`<div class="who">${logo(d.a,36)}<h3 style="margin:0">Historique ${d.a}</h3></div>
+     <div class="card" style="margin-top:12px">${h.length?histRows(h):'<div class="muted">Aucune transaction.</div>'}</div>`)},
+  sheetWd(d){const w=S.pwd.find(x=>x.id===d.id);if(!w)return;const isM=w.asset==='MGA',st=w.status,N=NETS[w.network];
+    openSheet(`<h3>Détails du retrait</h3>
+     <div class="who" style="margin-top:12px">${logo(w.asset,40,isM?null:w.network)}<b>Retrait ${w.asset}</b> ${stBadge(st)}</div>
+     <div class="big num ${st==='rejected'?'':'neg'}" style="margin:10px 0">${st==='rejected'?'':'−'}${fmt(w.asset,Number(w.amount))}</div>
+     <div class="card"><div class="row"><span class="muted">Demandé le</span><b>${esc(fdate(w.created_at))}</b></div>
+      ${w.decided_at?`<div class="row"><span class="muted">${st==='sent'?'Envoyé le':'Traité le'}</span><b>${esc(fdate(w.decided_at))}</b></div>`:''}
+      <div class="row"><span class="muted">Frais</span><b class="num">${fmt(w.asset,Number(w.fee||0))}</b></div>
+      ${isM?`<div class="row"><span class="muted">Opérateur</span><b>${esc(w.operator)}</b></div><div class="row"><span class="muted">Numéro</span><b class="num">${esc(w.mobile_number)}</b></div><div class="row"><span class="muted">Titulaire</span><b>${esc(w.holder_name||'—')}</b></div>`
+       :`<div class="row"><span class="muted">Réseau</span><b>${esc(N?N.label:w.network)}</b></div>${w.dest_type?`<div class="row"><span class="muted">Destination</span><b>${esc(DEST[w.dest_type]||'Autre')}${w.dest_name?' · '+esc(w.dest_name):''}</b></div>`:''}
+        <div class="muted" style="margin-top:8px">Adresse :</div><div class="addr">${esc(w.address)}</div>${w.memo?`<div class="row"><span class="muted">${N&&N.memo?esc(N.memo):'Memo'}</span><b>${esc(w.memo)}</b></div>`:''}`}
+      ${w.txid?`<div class="muted" style="margin-top:8px">${isM?'Référence du transfert :':'Identifiant de transaction (txid) :'}</div><div class="addr">${esc(w.txid)}</div>`:''}
+      ${st==='rejected'&&w.reject_reason?`<div class="row"><span class="muted">Motif</span><b style="text-align:right">${esc(w.reject_reason)}</b></div>`:''}</div>
+     ${(!isM&&w.txid)?expLink(w.network,w.txid):''}
+     <div class="note">${st==='pending'?'Votre demande est en attente de vérification par l\'équipe.':st==='sent'?'Le retrait a été envoyé.':'Le retrait a été refusé et le montant a été remboursé sur votre solde.'}</div>`)},
+  sheetDepReq(d){const x=S.pdep.find(y=>y.id===d.id);if(!x)return;const to=S.pay[x.operator];
+    openSheet(`<h3>Détails du dépôt MGA</h3><div class="who" style="margin-top:12px">${logo('MGA',40)}<b>Dépôt MGA</b> ${stBadge(x.status)}</div>
+     <div class="big num pos" style="margin:10px 0">+${fmt('MGA',Number(x.amount))}</div>
+     <div class="card"><div class="row"><span class="muted">Demandé le</span><b>${esc(fdate(x.created_at))}</b></div>
+      ${x.decided_at?`<div class="row"><span class="muted">Traité le</span><b>${esc(fdate(x.decided_at))}</b></div>`:''}
+      <div class="row"><span class="muted">Opérateur</span><b>${esc(x.operator)}</b></div><div class="row"><span class="muted">Envoyé depuis</span><b class="num">${esc(x.sender_number)}</b></div>
+      <div class="row"><span class="muted">Référence</span><b class="num">${esc(x.reference)}</b></div></div>
+     ${x.status==='pending'&&to?`<div class="warn">Envoyez l'argent au <b>${esc(fmtTel(to.number))}</b> (${esc(to.holder)}) en indiquant la référence <b>${esc(x.reference)}</b>. Votre solde est crédité après confirmation par l'équipe.</div>`:''}
+     ${x.status==='rejected'?'<div class="note">Cette demande a été refusée. Contactez le support si vous pensez à une erreur.</div>':''}`)},
+  sheetClaim(d){const c=S.claims.find(y=>y.id===d.id);if(!c)return;const N=NETS[c.network];
+    openSheet(`<h3>Détails du dépôt ${c.asset}</h3><div class="who" style="margin-top:12px">${logo(c.asset,40,c.network)}<b>Dépôt ${c.asset}</b> ${stBadge(c.status)}</div>
+     <div class="big num pos" style="margin:10px 0">+${fmt(c.asset,Number(c.amount))}</div>
+     <div class="card"><div class="row"><span class="muted">Déclaré le</span><b>${esc(fdate(c.created_at))}</b></div>
+      ${c.decided_at?`<div class="row"><span class="muted">Traité le</span><b>${esc(fdate(c.decided_at))}</b></div>`:''}
+      <div class="row"><span class="muted">Réseau</span><b>${esc(N?N.label:c.network)}</b></div>
+      <div class="muted" style="margin-top:8px">Envoyé depuis :</div><div class="addr">${esc(c.from_address)}</div>
+      <div class="muted" style="margin-top:8px">Txid :</div><div class="addr">${esc(c.txid)}</div></div>
+     ${expLink(c.network,c.txid)}
+     <div class="note">${c.status==='pending'?'En attente de vérification par l\'équipe sur la blockchain.':'Cette déclaration a été refusée. Contactez le support si vous pensez à une erreur.'}</div>`)},
+  sheetAsset(d){const a=d.a;
+    if(a==='MGA'){
+      openSheet(`<div class="who">${logo('MGA',48)}<div><h3 style="margin:0">Ariary malagasy (MGA)</h3><div class="muted">${OPS.join(' · ')}</div></div></div>
+       <div class="row" style="margin-top:14px"><span class="muted">Votre solde</span><b class="num">${fmt('MGA',bal('MGA'))}</b></div>
+       <div class="row"><span class="muted">Dépôt minimum</span><b class="num">${fmt('MGA',MIN_MGA)}</b></div>
+       <div class="row"><span class="muted">Retrait minimum</span><b class="num">${fmt('MGA',MIN_MGA_WD)}</b></div>
+       <div class="row"><span class="muted">Plafond de retrait sans KYC</span><b class="num">${fmt('MGA',LIMIT_NO_KYC)}</b></div>
+       <div class="grid2" style="margin-top:14px"><button class="p" data-act="sheetDepMGA">Déposer</button><button class="s" data-act="sheetWdMGA">Retirer</button></div>
+       <button class="s full" style="margin-top:10px" data-act="sheetAssetHistory" data-a="MGA">Historique MGA</button>`);return}
+    const c=chgOf(a),usd=(refPx(a)||sellPx(a))/(S.usdMga||4500),sp=S.cg[a]&&S.cg[a].spark,ok=priceOk(a);
+    openSheet(`<div class="who">${logo(a,48)}<div><h3 style="margin:0">${ASSETS[a].name} (${a})</h3><div class="muted">${ASSETS[a].nets.map(n=>NETS[n[0]].label).join(' · ')}</div></div></div>
+     ${c==null?'':`<div class="row" style="margin-top:14px"><span class="muted">Variation 24 h</span><b class="num ${c>=0?'pos':'neg'}">${pct(c)}</b></div>`}
+     ${sp?spark(sp).replace('class="mini"','style="width:100%;height:56px;margin:8px 0"'):''}
+     ${ok?'':'<div class="warn">La cotation de cet actif est momentanément indisponible.</div>'}
+     <div class="row"><span class="muted">Prix d'achat · MGA → ${a}</span><b class="num">${ok?fmt('MGA',Math.round(buyPx(a))):'—'}</b></div>
+     <div class="row"><span class="muted">Prix de vente · ${a} → MGA</span><b class="num">${ok?fmt('MGA',Math.round(sellPx(a))):'—'}</b></div>
+     <div class="row"><span class="muted">Équivalent en dollars</span><b class="num">${usd>0?usd.toLocaleString('fr-FR',{maximumFractionDigits:usd<1?4:2})+' $':'—'}</b></div>
+     <div class="row"><span class="muted">Votre solde</span><b class="num">${fmt(a,bal(a))}</b></div>
+     <div class="grid2" style="margin-top:14px"><button class="p" data-act="swapTo" data-a="${a}">Acheter</button><button class="s" data-act="swapFrom" data-a="${a}">Vendre</button>
+     <button class="s" data-act="sheetCryIn" data-a="${a}">Recevoir</button><button class="s" data-act="sheetCryOut" data-a="${a}">Envoyer</button></div>
+     <button class="s full" style="margin-top:10px" data-act="sheetAssetHistory" data-a="${a}">Historique ${a}</button>`)},
+  sheetDepMGA(){openSheet(`<h3>Déposer des MGA</h3>
+    <label for="f_op">Étape 1 · Choisissez l'opérateur avec lequel vous payez</label>
+    <select id="f_op" onchange="depOpChange()">${OPS.map(o=>`<option>${o}</option>`).join('')}</select>
+    <div id="dep_target"></div>
+    <label for="f_num">Étape 2 · Numéro qui envoie (à votre nom)</label><input id="f_num" inputmode="numeric" maxlength="10" placeholder="03XXXXXXXX">
+    <label for="f_amt">Montant (MGA)</label><input id="f_amt" inputmode="numeric" placeholder="50000">
+    <div class="note">Minimum ${fmt('MGA',MIN_MGA)}. Vous recevrez une référence à indiquer dans le motif du paiement. L'équipe vérifie que le paiement vient bien de ce numéro avant de créditer votre solde.</div>
+    <button class="p full" id="dep_btn" style="margin-top:16px" data-act="doDepMGA">Continuer</button>`);depOpChange()},
+  async doDepMGA(){const op=val('f_op'),number=val('f_num'),amount=num(val('f_amt')),to=S.pay[op];
+    if(!OPS.includes(op)) return toast('⚠ Choisissez un opérateur.');
+    if(!to) return toast('⚠ Le numéro de réception '+op+' n\'est pas encore disponible.');
+    if(!/^03\d{8}$/.test(number)) return toast('⚠ Numéro Mobile Money invalide.');
+    if(amount<MIN_MGA) return toast('⚠ Minimum '+fmt('MGA',MIN_MGA)+'.');
+    let ref=null;
+    const ok=await run(async()=>{ref=await rpc('request_mga_deposit',{p_operator:op,p_sender:number,p_amount:amount})},null,()=>{ui.tab='wallet';ui.openAsset='MGA'});
+    if(ok&&ref){
+      openSheet(`<h3>Demande enregistrée</h3><div class="muted">Pour finaliser votre dépôt de <b>${fmt('MGA',amount)}</b> :</div>
+       <div class="card" style="margin-top:12px"><div class="muted">Envoyez l'argent par ${esc(op)} au numéro :</div>
+       <div class="big num" style="font-size:26px">${esc(fmtTel(to.number))}</div><div class="muted">Au nom de : <b>${esc(to.holder)}</b></div>
+       <div class="row" style="margin-top:12px"><span class="muted">Référence à indiquer</span><b class="num">${esc(ref)}</b></div>
+       <div class="row"><span class="muted">Envoyé depuis</span><b class="num">${esc(number)}</b></div></div>
+       <div class="warn">Indiquez la référence <b>${esc(ref)}</b> dans le motif du paiement. Votre solde sera crédité après confirmation de la réception par l'équipe.</div>
+       <a class="lnk p" style="margin-top:6px" target="_blank" rel="noopener" href="${waLink('Bonjour, j\'ai fait une demande de dépôt de '+amount+' MGA via '+op+'. Référence : '+ref+'. Numéro : '+number)}">Prévenir le support (WhatsApp)</a>`)}},
+  sheetWdMGA(){openSheet(`<h3>Retirer des MGA</h3><div class="muted">Solde : <b>${fmt('MGA',bal('MGA'))}</b></div>
+    ${opSel('f_op')}<label for="f_num">Numéro qui reçoit</label><input id="f_num" inputmode="numeric" maxlength="10" placeholder="03XXXXXXXX">
+    <label for="f_holder">Nom du titulaire de ce numéro</label><input id="f_holder" autocomplete="off" placeholder="Nom et prénom inscrits sur le compte Mobile Money">
+    <div class="note">Saisissez le nom exact du compte Mobile Money qui reçoit. Il doit correspondre au numéro : un nom différent peut faire refuser le retrait.</div>
+    <label for="f_amt">Montant (MGA)</label><input id="f_amt" inputmode="numeric" placeholder="20000">
+    <div class="note">Minimum ${fmt('MGA',MIN_MGA_WD)}${kyc()?'':' · plafond sans KYC : '+fmt('MGA',LIMIT_NO_KYC)}. Les retraits sont vérifiés par l'équipe puis envoyés.</div>
+    <button class="p full" style="margin-top:16px" data-act="doWdMGA">Demander le retrait</button>`)},
+  doWdMGA(){const op=val('f_op'),number=val('f_num'),amount=num(val('f_amt'));let holder=val('f_holder').replace(/\s+/g,' ');
+    if(!OPS.includes(op)) return toast('⚠ Choisissez un opérateur.');
+    if(!/^03\d{8}$/.test(number)) return toast('⚠ Numéro Mobile Money invalide.');
+    if(holder.length<3) return toast('⚠ Saisissez le nom du titulaire du compte Mobile Money.');
+    if(!/^[A-Za-zÀ-ÿ' .-]{3,60}$/.test(holder)) return toast('⚠ Nom invalide : lettres uniquement (3 à 60 caractères).');
+    if(amount<MIN_MGA_WD) return toast('⚠ Minimum '+fmt('MGA',MIN_MGA_WD)+'.');
+    if(amount>bal('MGA')) return toast('⚠ Solde MGA insuffisant.');
+    run(()=>rpc('request_mga_withdrawal',{p_operator:op,p_number:number,p_holder:holder,p_amount:amount}),'Retrait demandé. Il sera vérifié puis envoyé par l\'équipe.')},
+  sheetCryIn(d){openCryIn(d.a)},
+  sheetCryOut(d){openCryOut(d.a)},
+  doCryOut(d){const a=d.a,net=val('f_net'),addr=val('f_addr'),amount=num(val('f_amt')),N=NETS[net],dest=val('f_dest')||'other',dname=val('f_dname');
+    const memo=val('f_memo'),nm=document.getElementById('f_nomemo'),noMemo=!!(nm&&nm.checked);
+    if(!N||!ASSETS[a].nets.some(n=>n[0]===net)) return toast('⚠ Réseau non pris en charge pour '+a+'.');
+    if(!N.re.test(addr)) return toast('⚠ Adresse invalide pour le réseau '+N.label+'. Vérifiez le réseau et l\'adresse.');
+    if(N.memo){
+      if(!memo&&dest==='exchange') return toast('⚠ Une plateforme d\'échange exige un '+N.memo.toLowerCase()+' pour '+a+'.');
+      if(!memo&&!noMemo) return toast('⚠ '+N.memo+' requis pour '+a+'. Si votre destinataire n\'en demande pas, cochez la case prévue.');
+      if(memo&&!N.memoRe.test(memo)) return toast('⚠ '+N.memo+' invalide.')}
+    if(amount<=0) return toast('⚠ Saisissez une quantité.');
+    const minW=(NETINFO[a+'|'+net]||{}).min||0;if(amount<minW) return toast('⚠ Minimum de retrait : '+fmt(a,minW)+'.');
+    if(amount+netFee(a,net)>bal(a)) return toast('⚠ Solde insuffisant (frais réseau de '+fmt(a,netFee(a,net))+' inclus).');
+    run(()=>rpc('request_crypto_withdrawal',{p_asset:a,p_network:net,p_address:addr,p_memo:N.memo?memo:'',p_amount:amount,p_no_memo:noMemo,p_dest_type:dest,p_dest_name:dname||null}),'Retrait demandé. Il sera vérifié puis envoyé par l\'équipe.')},
+  copyText(d){const t=d.t||'';if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>toast('Copié'),()=>toast('Appui long sur le texte pour le copier'))}else toast('Appui long sur le texte pour le copier')},
+  doClaim(d){const a=d.a,net=val('f_net'),N=NETS[net],from=val('f_from'),txid=val('f_txid'),amt=num(val('f_amt'));
+    if(!N||!ASSETS[a].nets.some(n=>n[0]===net)) return toast('⚠ Réseau non pris en charge pour '+a+'.');
+    if(!N.re.test(from)) return toast('⚠ Adresse d\'envoi invalide pour le réseau '+N.label+'.');
+    if(txid.length<8) return toast('⚠ Identifiant de transaction (txid) invalide.');
+    if(amt<=0) return toast('⚠ Saisissez le montant envoyé.');
+    run(()=>rpc('request_crypto_deposit',{p_asset:a,p_network:net,p_txid:txid,p_from:from,p_amount:amt}),'Dépôt déclaré. Il sera crédité après vérification par l\'équipe.')},
+  /* ----- administration ----- */
+  admSec(d){admLoad(d.s)},
+  admConfirmDep(d){if(confirm('Confirmer que le paiement a bien été reçu ?'))run(()=>rpc('admin_confirm_mga_deposit',{p_id:d.id}),'Dépôt confirmé.',()=>admLoad('dep'))},
+  admRejectDep(d){if(confirm('Refuser cette demande de dépôt ?'))run(()=>rpc('admin_reject_mga_deposit',{p_id:d.id}),'Dépôt refusé.',()=>admLoad('dep'))},
+  admDoneWd(d){const txid=d.a==='MGA'?(prompt('Référence du transfert Mobile Money (facultatif) :')||''):(prompt('Identifiant de transaction (txid) :')||'');
+    if(d.a!=='MGA'&&!txid) return toast('⚠ Le txid est requis pour un retrait crypto.');
+    run(()=>rpc('admin_complete_withdrawal',{p_id:d.id,p_txid:txid||null}),'Retrait marqué comme envoyé.',()=>admLoad('wd'))},
+  admRejectWd(d){const why=prompt('Motif du refus (le client sera remboursé) :');if(why===null)return;
+    run(()=>rpc('admin_reject_withdrawal',{p_id:d.id,p_reason:why||null}),'Retrait refusé et remboursé.',()=>admLoad('wd'))},
+  admKyc(d){run(()=>rpc('admin_set_kyc',{p_user:d.id,p_level:+d.l}),'KYC mis à jour.',()=>admLoad('cli'))},
+  admConfirmClaim(d){const v=prompt('Montant à créditer (vérifié sur l\'explorateur) :',d.amt);if(v===null)return;const amt=num(v);if(amt<=0)return toast('⚠ Montant invalide.');
+    run(()=>rpc('admin_confirm_deposit_claim',{p_id:d.id,p_amount:amt}),'Dépôt crypto crédité.',()=>admLoad('dcr'))},
+  admRejectClaim(d){if(confirm('Refuser cette déclaration de dépôt ?'))run(()=>rpc('admin_reject_deposit_claim',{p_id:d.id}),'Déclaration refusée.',()=>admLoad('dcr'))},
+  admPostAnn(){const title=val('an_title'),body=val('an_body'),level=val('an_level'),days=Math.max(0,Math.round(num(val('an_days'))));
+    if(body.length<3) return toast('⚠ Écrivez le message de l\'annonce.');
+    run(()=>rpc('admin_post_announcement',{p_title:title||null,p_body:body,p_level:level,p_days:days}),'Annonce publiée.',()=>admLoad('ann'))},
+  admToggleAnn(d){run(()=>rpc('admin_set_announcement_active',{p_id:d.id,p_active:d.on==='1'}),'Annonce mise à jour.',()=>admLoad('ann'))},
+  admDelAnn(d){if(confirm('Supprimer cette annonce ?'))run(()=>rpc('admin_delete_announcement',{p_id:d.id}),'Annonce supprimée.',()=>admLoad('ann'))},
+  admSavePay(){const todo=[];
+    for(let i=0;i<OPS.length;i++){const n=val('pn_'+i),h=val('ph_'+i);if(!n&&!h)continue;
+      if(!/^03\d{8}$/.test(n)) return toast('⚠ '+OPS[i]+' : numéro invalide (03XXXXXXXX).');
+      if(h.length<3) return toast('⚠ '+OPS[i]+' : nom du titulaire requis.');
+      todo.push([OPS[i],n,h])}
+    if(!todo.length) return toast('⚠ Renseignez au moins un numéro.');
+    run(async()=>{for(const t of todo)await rpc('admin_set_pay_number',{p_operator:t[0],p_number:t[1],p_holder:t[2]})},'Numéros enregistrés.',()=>admLoad('set'))},
+  admAddPool(){const net=val('pool_net'),list=val('pool_list');
+    if(!list) return toast('⚠ Collez au moins une adresse.');
+    run(()=>rpc('admin_add_address_pool',{p_network:net,p_addresses:list}),n=>(n||0)+' adresse(s) ajoutée(s) à la réserve.',()=>admLoad('set'))},
+  async admCredit(){const phone=val('c_phone'),a=val('c_asset'),net=val('c_net'),txid=val('c_txid'),amt=num(val('c_amt'));
+    if(!/^03\d{8}$/.test(phone)||!txid||amt<=0) return toast('⚠ Remplissez tous les champs.');
+    run(async()=>{const us=await sel('profiles?select=id,name&phone=eq.'+phone);if(!us||!us[0])throw new ApiError('Client introuvable.');
+      if(!confirm('Créditer '+fmt(a,amt)+' à '+us[0].name+' ?'))throw new ApiError('Annulé.');
+      await rpc('admin_credit_crypto_deposit',{p_user:us[0].id,p_asset:a,p_network:net,p_txid:txid,p_amount:amt})},'Dépôt crypto crédité.')},
+  async admWallet(){const a=val('w_asset'),net=val('w_net'),addr=val('w_addr');
+    if(!NETS[net]||!NETS[net].re.test(addr)) return toast('⚠ Adresse invalide pour ce réseau.');
+    run(()=>rpc('admin_set_platform_wallet',{p_asset:a,p_network:net,p_address:addr}),'Adresse enregistrée.',()=>admLoad('set'))},
+  async admClientAddr(){const phone=val('d_phone'),a=val('d_asset'),net=val('d_net'),addr=val('d_addr');
+    if(!/^03\d{8}$/.test(phone)) return toast('⚠ Numéro invalide.');
+    if(!NETS[net]||!NETS[net].re.test(addr)) return toast('⚠ Adresse invalide pour ce réseau.');
+    run(async()=>{const us=await sel('profiles?select=id&phone=eq.'+phone);if(!us||!us[0])throw new ApiError('Client introuvable.');
+      await rpc('admin_set_deposit_address',{p_user:us[0].id,p_asset:a,p_network:net,p_address:addr})},'Adresse du client enregistrée.')},
+  admSync(){const fx=val('p_fx');if(fx)LS.set('epoketrby_usdmga',fx);else LS.del('epoketrby_usdmga');run(()=>syncPrices(),r=>r+' prix mis à jour.',()=>{})},
+  admAuto(){LS.set('epoketrby_autosync',LS.get('epoketrby_autosync')==='0'?'1':'0');render(true)},
+  admSaveMargins(){const b=num(val('gm_buy'))/100,s=num(val('gm_sell'))/100;
+    if(b<0||s<0||b>0.2||s>0.2) return toast('⚠ Marge invalide (entre 0 et 20 %).');
+    run(()=>rpc('admin_set_global_margins',{p_buy:b,p_sell:s}),'Marges enregistrées.')},
+  admEditPx(d){const a=d.a,x=S.assets[a]||{},pc=v=>v==null?'':rnd(v*100,3);
+    openSheet(`<div class="who">${logo(a,44)}<h3 style="margin:0">Cours ${a}</h3></div>
+     <div class="muted" style="margin-top:8px">Marché : <b>${refPx(a)?fmt('MGA',refPx(a)):'—'}</b> · achat actuel : <b>${buyPx(a)?fmt('MGA',Math.round(buyPx(a))):'—'}</b> · vente actuelle : <b>${sellPx(a)?fmt('MGA',Math.round(sellPx(a))):'—'}</b></div>
+     <div class="note">Laissez un champ vide pour utiliser le réglage automatique (prix du marché ± marge par défaut).</div>
+     <label for="e_bm">Marge MGA → ${a} (achat client), en %</label><input id="e_bm" inputmode="decimal" value="${pc(x.bm)}" placeholder="par défaut : ${rnd(S.gm.buy*100,3)}">
+     <label for="e_sm">Marge ${a} → MGA (vente client), en %</label><input id="e_sm" inputmode="decimal" value="${pc(x.sm)}" placeholder="par défaut : ${rnd(S.gm.sell*100,3)}">
+     <label for="e_mb">Prix manuel MGA → ${a} : 1 ${a} = ? MGA</label><input id="e_mb" inputmode="decimal" value="${x.mb==null?'':x.mb}" placeholder="automatique">
+     <label for="e_ms">Prix manuel ${a} → MGA : 1 ${a} = ? MGA</label><input id="e_ms" inputmode="decimal" value="${x.ms==null?'':x.ms}" placeholder="automatique">
+     <div class="warn">Le prix d'achat doit toujours être supérieur ou égal au prix de vente. Un prix manuel reste valable 24 h, puis le cours automatique reprend.</div>
+     <button class="p full" style="margin-top:6px" data-act="admSavePx" data-a="${a}">Enregistrer</button>
+     <button class="s full" style="margin-top:10px" data-act="admResetPx" data-a="${a}">Revenir au mode automatique</button>`)},
+  admSavePx(d){const f=id=>{const v=val(id);return v===''?null:num(v)};
+    const bm=f('e_bm'),sm=f('e_sm'),mb=f('e_mb'),ms=f('e_ms');
+    if((bm!=null&&(bm<0||bm>20))||(sm!=null&&(sm<0||sm>20))) return toast('⚠ Marge invalide (entre 0 et 20 %).');
+    if((mb!=null&&mb<=0)||(ms!=null&&ms<=0)) return toast('⚠ Prix manuel invalide.');
+    if(mb!=null&&ms!=null&&mb<ms) return toast('⚠ Le prix d\'achat doit être supérieur ou égal au prix de vente.');
+    run(()=>rpc('admin_set_asset_pricing',{p_asset:d.a,p_buy_margin:bm==null?null:bm/100,p_sell_margin:sm==null?null:sm/100,p_manual_buy:mb,p_manual_sell:ms}),'Cours enregistré.')},
+  admResetPx(d){run(()=>rpc('admin_set_asset_pricing',{p_asset:d.a,p_buy_margin:null,p_sell_margin:null,p_manual_buy:null,p_manual_sell:null}),'Cours remis en automatique.')},
+  admEditNet(d){const r=(S.netRows||[]).find(x=>x.asset===d.a&&x.network===d.n);if(!r)return;
+    openSheet(`<div class="who">${logo(d.a,40,d.n)}<h3 style="margin:0">${esc(r.label)} · ${d.a}</h3></div>
+     <label for="e_label">Nom affiché</label><input id="e_label" value="${esc(r.label)}">
+     <label for="e_fee">Frais de retrait (en ${d.a})</label><input id="e_fee" inputmode="decimal" value="${Number(r.fee)}">
+     <label for="e_min">Retrait minimum (en ${d.a})</label><input id="e_min" inputmode="decimal" value="${Number(r.min_withdraw)}">
+     <label for="e_en">Réseau actif ?</label><select id="e_en"><option value="1" ${r.enabled?'selected':''}>Oui (visible par les clients)</option><option value="0" ${r.enabled?'':'selected'}>Non (masqué)</option></select>
+     <div class="warn">N'activez un réseau que si vous avez des adresses de dépôt pour lui (réserve ou adresse commune) et que vous pouvez envoyer la crypto sur ce réseau. Réglez les frais près des frais réels de la blockchain.</div>
+     <button class="p full" style="margin-top:6px" data-act="admSaveNet" data-a="${d.a}" data-n="${esc(d.n)}">Enregistrer</button>`)},
+  admSaveNet(d){const r=(S.netRows||[]).find(x=>x.asset===d.a&&x.network===d.n);if(!r)return;
+    const label=val('e_label'),fee=num(val('e_fee')),min=num(val('e_min')),en=val('e_en')==='1';
+    if(label.length<2) return toast('⚠ Nom du réseau requis.');if(fee<0||min<0) return toast('⚠ Frais ou minimum invalide.');
+    run(()=>rpc('admin_set_network',{p_asset:d.a,p_network:d.n,p_label:label,p_fee:fee,p_min:min,p_regex:r.address_regex,p_needs_memo:!!r.needs_memo,p_memo_regex:r.memo_regex||null,p_enabled:en}),'Réseau mis à jour.',()=>admLoad('net'))},
+  admAddNet(){const a=val('n_asset'),code=val('n_code').toUpperCase(),label=val('n_label'),kind=val('n_kind'),memo=val('n_memo'),fee=num(val('n_fee')),min=num(val('n_min'));
+    const RE={evm:'^0x[a-fA-F0-9]{40}$',tron:'^T[1-9A-HJ-NP-Za-km-z]{33}$',sol:'^[1-9A-HJ-NP-Za-km-z]{32,44}$',btc:'^(bc1[a-z0-9]{20,70}|[13][1-9A-HJ-NP-Za-km-z]{25,34})$',ton:'^(EQ|UQ)[A-Za-z0-9_-]{46}$',gen:'^[A-Za-z0-9:_.-]{20,100}$'};
+    if(!/^[A-Z0-9]{2,12}$/.test(code)) return toast('⚠ Code réseau invalide (2 à 12 lettres ou chiffres).');
+    if(label.length<2) return toast('⚠ Nom du réseau requis.');if(fee<0||min<0) return toast('⚠ Frais ou minimum invalide.');
+    const mre=memo==='num'?'^[0-9]{1,10}$':memo==='txt'?'^[ -~]{1,28}$':null;
+    run(()=>rpc('admin_set_network',{p_asset:a,p_network:code,p_label:label,p_fee:fee,p_min:min,p_regex:RE[kind],p_needs_memo:!!memo,p_memo_regex:mre,p_enabled:false}),'Réseau ajouté (désactivé : activez-le quand vous êtes prêt).',()=>admLoad('net'))},
+  admRandTopic(){const b=new Uint8Array(10);try{(window.crypto||{}).getRandomValues(b)}catch(e){for(let i=0;i<10;i++)b[i]=Math.floor(Math.random()*256)}
+    const t='epoketrby-'+Array.from(b).map(x=>x.toString(36).padStart(2,'0')).join('').slice(0,14);const e=document.getElementById('nt_topic');if(e)e.value=t},
+  admSaveNtfy(){const t=val('nt_topic');if(!/^[A-Za-z0-9_-]{8,64}$/.test(t)) return toast('⚠ Sujet invalide (8 à 64 lettres, chiffres, - ou _).');
+    run(()=>rpc('admin_set_ntfy_topic',{p_topic:t}),'Sujet enregistré. Abonnez-vous au même sujet dans l\'application ntfy.',()=>admLoad('set'))},
+  admTestNtfy(){run(()=>rpc('admin_test_notification',{}),'Notification de test envoyée.')},
+  admSound(){LS.set('epoketrby_sound',LS.get('epoketrby_sound')==='0'?'1':'0');render(true)}
+};
+function depOpChange(){const op=val('f_op'),x=S.pay[op],box=document.getElementById('dep_target'),btn=document.getElementById('dep_btn');if(!box)return;
+  if(x){box.innerHTML=`<div class="card" style="margin:12px 0"><div class="muted">Envoyez l'argent à ce numéro ${esc(op)} :</div><div class="big num" style="font-size:26px">${esc(fmtTel(x.number))}</div><div class="muted">Au nom de : <b>${esc(x.holder)}</b></div></div>`;if(btn)btn.disabled=false}
+  else{box.innerHTML=`<div class="warn">Le numéro de réception ${esc(op)} n'est pas encore disponible. Choisissez un autre opérateur ou contactez le support.</div>`;if(btn)btn.disabled=true}}
+function admNets(aid,nid){const a=val(aid);const s=document.getElementById(nid);if(!s)return;s.innerHTML=ASSETS[a].nets.map(n=>`<option value="${n[0]}">${NETS[n[0]].label}</option>`).join('')}
+
+/* synchronisation des prix par l'admin (CoinGecko × taux USD→MGA) */
+async function syncPrices(){
+  const ids=CR.map(a=>ASSETS[a].cg).join(',');
+  const r1=await fetch('https://api.coingecko.com/api/v3/simple/price?ids='+ids+'&vs_currencies=usd').catch(()=>null);
+  if(!r1||!r1.ok) throw new ApiError('Prix CoinGecko indisponibles pour le moment.');
+  const px_=await r1.json();let fx=num(LS.get('epoketrby_usdmga')||'');
+  if(!fx){const r2=await fetch('https://open.er-api.com/v6/latest/USD').catch(()=>null);if(r2&&r2.ok){const j=await r2.json();fx=j&&j.rates&&j.rates.MGA}}
+  if(!fx||fx<=0) throw new ApiError('Taux USD→MGA indisponible : saisissez-le manuellement.');
+  S.usdMga=fx;let n=0;
+  for(const a of CR){const usd=px_[ASSETS[a].cg]&&px_[ASSETS[a].cg].usd;if(!usd)continue;
+    await rpc('admin_set_price',{p_asset:a,p_price_mga:Math.max(1,Math.round(usd*fx))});n++}
+  if(!n) throw new ApiError('Aucun prix reçu.');return n}
+async function autoSync(){
+  if(!S.me||!isAdmin()||LS.get('epoketrby_autosync')==='0'||ui.lock) return;
+  try{await syncPrices();await refresh();if(!busy()&&(ui.tab==='admin'||ui.tab==='quotes'))render(true)}catch(e){}}
+
+/* conversions : mise à jour en direct sans tout redessiner */
+function setSwap(){const s=ui.swap;let f=val('sw_from'),t=val('sw_to');
+  if(f!==s.from){ if(f==='MGA'){ if(t==='MGA') t='USDT' } else t='MGA' }
+  else { if(t!=='MGA') f='MGA'; else if(f==='MGA') f='USDT' }
+  s.from=f;s.to=t;s.amt='';render(true)}
+function calcSwap(fromRender){const s=ui.swap;if(!fromRender){s.amt=val('sw_amt')}
+  const a=num(s.amt),o=(a>0&&priceOk(swapCrypto(s.from,s.to)))?swapOut(s.from,s.to,a):0;
+  const out=$('#sw_out');if(out)out.textContent=fmt(s.to,o);
+  const r=$('#sw_rate');if(r)r.textContent=swapRate(s.from,s.to)}
+
+function busy(){if(!S.me||sheetOpen()||ui.lock)return true;
+  const a=document.activeElement;return !!(a&&a.matches&&a.matches('input,select,textarea'))}
+async function poll(){
+  if(!SESS||!S.loaded||busy()||document.hidden) return;
+  try{await refresh();if(!busy()){ if(ui.tab==='swap')calcSwap(true); else if(ui.tab!=='admin') render(true)}}catch(e){}}
+
+document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;
+  if(t.dataset.act==='closeSheet'||!A[t.dataset.act]){closeSheet();return}A[t.dataset.act](t.dataset)});
+$('#sheetWrap').addEventListener('click',e=>{if(e.target.id==='sheetWrap')closeSheet()});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.closest('.auth')){const b=document.querySelector('.auth .p');if(b)b.click()}});
+
+/* alertes admin : nouvelles demandes (son + vibration + pastille) */
+async function adminCounts(){
+  const g=p=>sel(p).catch(()=>[]);
+  const [d,w,c]=await Promise.all([g('mga_deposits?select=id&status=eq.pending&limit=200'),g('withdrawals?select=id&status=eq.pending&limit=200'),g('crypto_deposit_claims?select=id&status=eq.pending&limit=200')]);
+  const cnt={dep:(d||[]).length,wd:(w||[]).length,dcr:(c||[]).length};cnt.total=cnt.dep+cnt.wd+cnt.dcr;return cnt}
+function beep(){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;const ctx=beep.ctx||(beep.ctx=new AC());
+  [880,1175,880].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+i*.22;o.frequency.value=f;o.connect(g);g.connect(ctx.destination);
+    g.gain.setValueAtTime(.18,t);g.gain.exponentialRampToValueAtTime(.0001,t+.2);o.start(t);o.stop(t+.21)})}catch(e){}}
+function alarm(c,p){const msg=c.wd>p.wd?'Nouvelle demande de retrait':c.dep>p.dep?'Nouveau dépôt MGA à valider':'Nouveau dépôt crypto déclaré';
+  toast('🔔 '+msg);if(LS.get('epoketrby_sound')!=='0')beep();try{navigator.vibrate&&navigator.vibrate([250,120,250])}catch(e){}}
+async function adminPoll(){
+  if(!SESS||!S.me||!isAdmin()) return;
+  try{const c=await adminCounts(),prev=S.admCnt;S.admCnt=c;
+    document.title=(c.total?'('+c.total+') ':'')+"E-POKETR'BY";
+    if(prev&&c.total>prev.total) alarm(c,prev);
+    if(!prev||prev.total!==c.total){if(!busy())render(true)}
+  }catch(e){}}
+
+/* installation sur l'écran d'accueil (PWA) */
+let INSTALL_EVT=null;
+const isStandalone=()=>!!((window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true);
+if(window.addEventListener){
+  window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();INSTALL_EVT=e});
+  window.addEventListener('appinstalled',()=>{INSTALL_EVT=null;toast('Application installée sur votre écran d\'accueil.')})}
+
+/* démarrage */
+async function boot(){
+  applyTheme();render();
+  if(SESS){
+    try{await refresh();render();adminPoll();}
+    catch(e){
+      if(e.code==='net'){document.getElementById('app').innerHTML=headerBar(false)+`<main><div class="card" style="margin-top:20px"><b>Connexion impossible</b><div class="muted" style="margin-top:6px">Vérifiez votre internet puis rechargez la page.</div></div></main>`;}
+      else{toast('⚠ '+friendlyErr(e));await doLogout(true)}}
+  }
+  loadMarket();
+  setInterval(poll,20000);setInterval(loadMarket,300000);setInterval(autoSync,60000);setInterval(adminPoll,15000);setTimeout(adminPoll,3000);
+  setTimeout(autoSync,4000)}
+boot();
+
+/* ---------- mises à jour instantanées (site en ligne uniquement) ----------
+   À chaque déploiement, un petit fichier version.json change. L'application le consulte régulièrement :
+   dès qu'une nouvelle version existe, elle se recharge toute seule quand l'utilisateur revient sur l'app,
+   ou affiche le bandeau « Mettre à jour ». Aucun nouveau lien à envoyer : l'adresse du site ne change jamais. */
+const APP_BUILD='2026-11-08-2';
+if(location.protocol==='http:'||location.protocol==='https:'){
+  let newer=false;
+  const showUpd=()=>{const b=document.getElementById('upd');if(b)b.style.display='block'};
+  async function checkVersion(){
+    try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const j=await r.json();
+      if(j&&j.build&&j.build!==APP_BUILD){newer=true;showUpd()}}catch(e){}}
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden)return;
+    checkVersion().then(()=>{ if(newer&&!sheetOpen()&&!ui.lock){const a=document.activeElement;if(!(a&&a.matches&&a.matches('input,select,textarea')))location.reload()} })});
+  setInterval(checkVersion,60000);setTimeout(checkVersion,5000);
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+}
+</script>
+</body>
+</html>
